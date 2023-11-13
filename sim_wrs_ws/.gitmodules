@@ -1,0 +1,3 @@
+[submodule "src/tmc_gazebo_task_evaluators"]
+	path = src/tmc_gazebo_task_evaluators
+	url = git@github.com:keio-smilab23/tmc_gazebo_task_evaluators.git
