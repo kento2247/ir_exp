@@ -1,0 +1,1 @@
+/workspace/py2_ws/devel/.private/wrs_controller/lib/pkgconfig/wrs_controller.pc

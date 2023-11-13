@@ -1,0 +1,6 @@
+devel_space: /workspace/py3_ws/devel
+install: false
+install_space: /workspace/py3_ws/install
+profile: default
+source_space: /workspace/py3_ws/src
+workspace: /workspace/py3_ws

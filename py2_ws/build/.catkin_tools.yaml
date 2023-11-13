@@ -1,0 +1,6 @@
+devel_space: /workspace/py2_ws/devel
+install: false
+install_space: /workspace/py2_ws/install
+profile: default
+source_space: /workspace/py2_ws/src
+workspace: /workspace/py2_ws
