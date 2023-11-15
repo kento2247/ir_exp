@@ -3,6 +3,7 @@
 """
 WRS環境内でロボットを動作させるためのメインプログラム
 """
+#test
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
