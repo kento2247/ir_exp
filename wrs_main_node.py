@@ -25,7 +25,7 @@ from detector_msgs.srv import (
 from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
-import putIn_positionLabel as putIn_positionLabel
+import PositionManager as PositionManager
 
 
 class WrsMainController(object):
@@ -575,7 +575,7 @@ class WrsMainController(object):
                 #     self.put_in_place("bin_b_place", "put_in_bin")
                 # total_cnt += 1
 
-                place_obj = putIn_positionLabel.get_putIn_positionLabel(label)
+                place_obj = PositionManager.get_putIn_positionLabel(label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
                 self.put_in_place(deposit, "put_in_bin")
