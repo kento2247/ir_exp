@@ -1,4 +1,4 @@
-class PositionManager:
+class PositionLabelManager:
     def __init__(self):
         self.positions = {}
         self.foodCount = 0
@@ -91,16 +91,10 @@ class PositionManager:
         for obj in taskItems_labels:
             self.positions[obj] = {"place": "Bin_A", "deposit": "Bin_A"}
 
-    def get_putIn_positionLabel(self, label):
+    def get(self, label):
         if self.positions[label]["deposit"] == "":
             self.positions[label]["deposit"] = (
                 "Tray_A" if self.foodCount % 2 == 0 else "Tray_B"
             )
             self.foodCount += 1
         return self.positions[label]
-
-
-# Example usage
-position_manager = PositionManager()
-result = position_manager.get_putIn_positionLabel("banana")
-print(result)
