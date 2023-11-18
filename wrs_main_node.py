@@ -25,7 +25,9 @@ from detector_msgs.srv import (
 from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
-import PositionManager as PositionManager
+from PositionLabelManager import PositionLabelManager
+
+PLM = PositionLabelManager()  # PositionLabelManagerクラスのインスタンスを作成
 
 
 class WrsMainController(object):
@@ -33,7 +35,7 @@ class WrsMainController(object):
     WRSのシミュレーション環境内でタスクを実行するクラス
     """
 
-    IGNORE_LIST = [
+    IGNORE_LIST = [  # 把持しづらそうだから把持対象から除外する物体のラベル
         "small_marker",
         "large_marker",
         "lego_duplo",
@@ -380,7 +382,6 @@ class WrsMainController(object):
     def put_in_place(self, place, into_pose):
         # 指定場所に入れ、all_neutral姿勢を取る。
         self.change_pose("look_at_near_floor")
-        a = "go_palce"  # TODO 不要な変数
         self.goto_name(place)
         self.change_pose("all_neutral")
         self.change_pose(into_pose)
@@ -392,7 +393,6 @@ class WrsMainController(object):
         # trofastの引き出しを引き出す
         self.goto_name("stair_like_drawer")
         self.change_pose("grasp_on_table")
-        a = True  # TODO 不要な変数
         gripper.command(1)
         whole_body.move_end_effector_pose(
             x, y + self.TROFAST_Y_OFFSET, z, yaw, pitch, roll
@@ -467,7 +467,7 @@ class WrsMainController(object):
             pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
             waypoint = self.select_next_waypoint(i, pos_bboxes)
             # TODO メッセージを確認するためコメントアウトを外す
-            # rospy.loginfo(waypoint)
+            rospy.loginfo(waypoint)
             self.goto_pos(waypoint)
 
     def select_next_waypoint(self, current_stp, pos_bboxes):
@@ -534,7 +534,7 @@ class WrsMainController(object):
         task1を実行する
         """
         rospy.loginfo("#### start Task 1 ####")
-        hsr_position = [
+        hsr_position = [  # 移動してほしい場所, 視線を向ける方向
             ("tall_table", "look_at_tall_table"),
             # ("near_long_table_l", "look_at_near_floor"),
             # ("long_table_r", "look_at_long_table"),
@@ -560,7 +560,7 @@ class WrsMainController(object):
                 label = graspable_obj["label"]
                 grasp_bbox = graspable_obj["bbox"]
                 # TODO ラベル名を確認するためにコメントアウトを外す
-                # rospy.loginfo("grasp the " + label)
+                rospy.loginfo("grasp the " + label)
 
                 # 把持対象がある場合は把持関数実施
                 grasp_pos = self.get_grasp_coordinate(grasp_bbox)
@@ -575,7 +575,7 @@ class WrsMainController(object):
                 #     self.put_in_place("bin_b_place", "put_in_bin")
                 # total_cnt += 1
 
-                place_obj = PositionManager.get_putIn_positionLabel(label)
+                place_obj = PositionLabelManager.get(label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
                 self.put_in_place(deposit, "put_in_bin")
