@@ -537,8 +537,8 @@ class WrsMainController(object):
         rospy.loginfo("#### start Task 1 ####")
         hsr_position = [  # 移動してほしい場所, ロボットの姿勢
             ("tall_table", "look_at_tall_table"),
-            # ("near_long_table_l", "look_at_near_floor"),
-            # ("long_table_r", "look_at_long_table"),
+            ("near_long_table_l", "look_at_near_floor"),
+            ("long_table_r", "look_at_long_table"),
         ]
 
         total_cnt = 0
@@ -639,12 +639,11 @@ def main():
 
         # タスクの実行モードを確認する
         if rospy.get_param("~test_mode", default=False) is True:
-            rospy.loginfo(json.dumps(ctrl.positionLabels))
             rospy.loginfo("#### start with TEST mode. ####")
-            check_drawerHeight(ctrl)  # debug
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
             ctrl.run()
+            # check_drawerHeight(ctrl)  # debug
 
     except rospy.ROSInterruptException:
         pass
