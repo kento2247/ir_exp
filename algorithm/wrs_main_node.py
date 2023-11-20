@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-WRS環境内でロボットを動作させるためのメインプログラム
+the main program to operate a robot in WRS environment 
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -29,10 +29,10 @@ from wrs_algorithm.util import gripper, omni_base, whole_body
 
 class WrsMainController(object):
     """
-    WRSのシミュレーション環境内でタスクを実行するクラス
+    this class executes tasks under WRS simulation
     """
 
-    IGNORE_LIST = [  # 把持しづらそうだから把持対象から除外する物体のラベル
+    IGNORE_LIST = [  # labels of omitted objects that asre hard to grasp
         "small_marker",
         "large_marker",
         "lego_duplo",
@@ -43,24 +43,23 @@ class WrsMainController(object):
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
     GRASP_BACK = {"z": 0.05, "xy": 0.1}
-    HAND_PALM_OFFSET = 0.05  # hand_palm_linkは指の付け根なので、把持のために少しずらす必要がある
-    HAND_PALM_Z_OFFSET = 0.075
+    HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.3
 
     def __init__(self):
-        # 変数の初期化
+        # initialization of variables
         self.instruction_list = []
         self.detection_list = []
 
-        # configファイルの受信
+        # receiving of congifuration files
         self.coordinates = self.load_json(self.get_path(["config", "coordinates.json"]))
         self.poses = self.load_json(self.get_path(["config", "poses.json"]))
         self.positionLabels = self.load_json(
             self.get_path(["config", "positionLabels.json"])
         )
 
-        # ROS通信関連の初期化
+        # Initialization of ROS communication related factors
         tf_from_bbox_srv_name = "set_tf_from_bbox"
         rospy.wait_for_service(tf_from_bbox_srv_name)
         self.tf_from_bbox_clt = rospy.ServiceProxy(
@@ -84,7 +83,7 @@ class WrsMainController(object):
     @staticmethod
     def get_path(pathes, package="wrs_algorithm"):
         """
-        ROSパッケージ名とファイルまでのパスを指定して、ファイルのパスを取得する
+        Get a file path by specifying the ROS package name and the pathes to those files
         """
         if not pathes:  # check if the list is empty
             rospy.logerr("Can NOT resolve file path.")
@@ -96,35 +95,35 @@ class WrsMainController(object):
     @staticmethod
     def load_json(path):
         """
-        jsonファイルを辞書型で読み込む
-        変更不要
+        Load JSON File Data as Dictionary Type
+        No Change Needed
         """
         with open(path, "r") as json_file:
             return json.load(json_file)
 
     def instruction_cb(self, msg):
         """
-        指示文を受信する
-        変更不要
+        Receive instruction
+        No Change Needed
         """
         rospy.loginfo("instruction received. [%s]", msg.data)
         self.instruction_list.append(msg.data)
 
     def detection_cb(self, msg):
         """
-        検出結果を受信する
-        変更不要
+        Receive Detection Information
+        No Change Needed
         """
         rospy.loginfo("received [Collision detected with %s]", msg.data)
         self.detection_list.append(msg.data)
 
     def get_relative_coordinate(self, parent, child):
         """
-        tfで相対座標を取得する
-        変更不要
+        Get Relative Coordinates using tf
+        No Change Needed
         """
         try:
-            # 4秒待機して各tfが存在すれば相対関係をセット
+            # Wait Four Seconds, if each tf exists, set the relativity info
             trans = self.tf_buffer.lookup_transform(
                 parent, child, rospy.Time.now(), rospy.Duration(2.0)
             )
@@ -143,8 +142,8 @@ class WrsMainController(object):
 
     def goto_name(self, name):
         """
-        waypoint名で指定された場所に移動する
-        変更不要
+        Move to a Specified Location by the Waypoint Name
+        No Change Needed
         """
         if name in self.coordinates["positions"].keys():
             pos = self.coordinates["positions"][name]
@@ -156,16 +155,16 @@ class WrsMainController(object):
 
     def goto_pos(self, pos):
         """
-        waypoint名で指定された場所に移動する
-        変更不要
+        Go to (x, y) Coordinate Facing z Direction
+        No Change Neede
         """
         rospy.loginfo("go to [raw_pos](%.2f, %.2f, %.2f)", pos[0], pos[1], pos[2])
         return omni_base.go_abs(pos[0], pos[1], pos[2])
 
     def change_pose(self, name):
         """
-        指定された姿勢名に遷移する
-        変更不要
+        Transform to a Specified Pose
+        No Change Needed
         """
         if name in self.poses.keys():
             rospy.loginfo("change pose to [%s]", name)
@@ -177,6 +176,7 @@ class WrsMainController(object):
     def check_positions(self):
         """
         読み込んだ座標ファイルの座標を巡回する
+        Go Around the Coordinates From the Coordinate Files
         """
         whole_body.move_to_go()
         for wp_name in self.coordinates["routes"]["test"]:
@@ -185,31 +185,32 @@ class WrsMainController(object):
 
     def get_latest_detection(self):
         """
-        最新の認識結果が到着するまで待つ
-        変更不要
+        Wait till the Newest Recognition Data Arrives
+        No Change Needed
         """
         res = self.detection_clt(GetObjectDetectionRequest())
         return res.bboxes
 
     def get_grasp_coordinate(self, bbox):
         """
-        BBox情報から把持座標を取得する
-        変更不要
+        Get the Grasping Coordinate from BBox Information
+        No Change Needed
         """
         # BBox情報からtfを生成して、座標を取得
+        # Create tf from Bbox Info and get the Coordinates
         self.tf_from_bbox_clt.call(
             SetTransformFromBBoxRequest(bbox=bbox, frame=self.GRASP_TF_NAME)
         )
-        rospy.sleep(1.0)  # tfが安定するのを待つ
+        rospy.sleep(1.0)  # Wait Untill tf Stabilizes
         return self.get_relative_coordinate("map", self.GRASP_TF_NAME).translation
 
     @classmethod
     def get_most_graspable_bbox(cls, obj_list):
         """
-        最も把持が行えそうなbboxを一つ返す。
-        変更不要
+        Return the most graspable bbox
+        No Change Needed
         """
-        # objが一つもない場合は、Noneを返す
+        # if no object exists, return None
         obj = cls.get_most_graspable_obj(obj_list)
         if obj is None:
             return None
@@ -218,7 +219,7 @@ class WrsMainController(object):
     @classmethod
     def get_most_graspable_obj(cls, obj_list):
         """
-        把持すべきscoreが最も高い物体を返す。
+        Return the Object with the Highest Graspable Scores
         """
         print("obj list: ", obj_list)
         extracted = []
@@ -237,7 +238,8 @@ class WrsMainController(object):
 
         rospy.loginfo(extract_str + ignore_str)
 
-        # つかむべきかのscoreが一番高い物体を返す
+        # Return the Object with the Highest Graspable Scores
+        #
         for obj_info in sorted(extracted, key=lambda x: x["score"], reverse=True):
             obj = obj_info["bbox"]
             info_str = "{} ({:.2%}, {:3d}, {:3d}, {:3d}, {:3d})\n".format(
@@ -246,13 +248,13 @@ class WrsMainController(object):
             rospy.loginfo("selected bbox: " + info_str)
             return obj_info
 
-        # objが一つもない場合は、Noneを返す
+        # If no Object exist, return None
         return None
 
     @classmethod
     def calc_score_bbox(cls, bbox):
         """
-        detector_msgs/BBoxのスコアを計算する
+        Calculate the detector_msgs/BBox Scores
         """
         gravity_x = bbox.x + bbox.w / 2
         gravity_y = bbox.y + bbox.h / 2
@@ -263,9 +265,9 @@ class WrsMainController(object):
     @classmethod
     def get_most_graspable_bboxes_by_label(cls, obj_list, label):
         """
-        label名が一致するオブジェクトの中から最も把持すべき物体のbboxを返す
-        label名でobj_listをフィルタリングして、get_most_graspable_bbox()を実行する
-        変更不要
+        Return the Bbox of the Most Graspable Object from Ones that Matches the label Name
+        Filter the obj_list with the label name and run get_most_graspable_bbox()
+        No Change Needed
         """
         match_objs = [obj for obj in obj_list if obj.label in label]
         if not match_objs:
@@ -277,7 +279,8 @@ class WrsMainController(object):
     def extract_target_obj_and_person(instruction):
         """
         指示文から対象となる物体名称と対象の人物を抽出する
-        変更不要
+        Extract the Target Object Name and the Person From The Instruction
+        No Change Needed
         """
         rospy.loginfo("[extract_target_obj_and_person] instruction:" + instruction)
 
@@ -289,9 +292,8 @@ class WrsMainController(object):
 
     def grasp_from_side(self, pos_x, pos_y, pos_z, yaw, pitch, roll, preliminary="-y"):
         """
-        把持の一連の動作を行う
-
-        NOTE: tall_tableに対しての予備動作を生成するときはpreliminary="-y"と設定することになる。
+        Execute the Whole Grasping Motion
+        Note: if you are creating an initial movement against "tall_table" set preliminary="-y"
         """
         if preliminary not in ["+y", "-y", "+x", "-x"]:
             raise RuntimeError(
@@ -343,9 +345,9 @@ class WrsMainController(object):
 
     def grasp_from_front_side(self, grasp_pos):
         """
-        正面把持を行う
-        ややアームを下に向けている
-        微調整必要かも
+        Grasping from the Front
+        The Arm is Tilting Downwards a Little
+        Might Need Changes
         """
         grasp_pos.y -= self.HAND_PALM_OFFSET
         rospy.loginfo(
@@ -358,9 +360,9 @@ class WrsMainController(object):
 
     def grasp_from_upper_side(self, grasp_pos):
         """
-        上面から把持を行う
-        オブジェクトに寄るときは、y軸から近づく上面からは近づかない
-        微調整必要かも
+        Grasping from Uppserside
+        Grasps the Object from the Y-axis
+        Might Need Changes
         """
         grasp_pos.z += self.HAND_PALM_Z_OFFSET
         rospy.loginfo(
@@ -373,24 +375,24 @@ class WrsMainController(object):
 
     def exec_graspable_method(self, grasp_pos, label=""):
         """
-        task1専用:posの位置によって把持方法を判定し実行する。
-        微調整必要かも
+        task1: Decides the Grasping Motion from the positions
+        Might Need Changes
         """
         method = None
-        graspable_y = 1.85  # これ以上奥は把持できない
+        graspable_y = 1.85  # Can't Grasp Any Further
         desk_y = 1.5
         desk_z = 0.35
 
-        # 把持禁止判定
+        # No Grasping Conditions
         if graspable_y < grasp_pos.y and desk_z > grasp_pos.z:
             return False
 
         if label in ["cup", "frisbee", "bowl"]:
-            # bowlの張り付き対策
+            # Avoiding Bowl Sticking to the Arm
             method = self.grasp_from_upper_side
         else:
             if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
-                # 机の下である場合
+                # If the object is under the desk
                 method = self.grasp_from_front_side
             else:
                 method = self.grasp_from_upper_side
@@ -399,7 +401,8 @@ class WrsMainController(object):
         return True
 
     def put_in_place(self, place, into_pose):
-        # 指定場所に入れ、all_neutral姿勢を取る。
+        # 指定場所に入れ、all_neutral姿勢を取る
+        # Put the object in a corresponding location and pose all_neutral
         self.change_pose("look_at_near_floor")
         self.goto_name(place)
         self.change_pose("all_neutral")
@@ -409,9 +412,9 @@ class WrsMainController(object):
         self.change_pose("all_neutral")
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
-        # trofastの引き出しを引き出す
+        #pull the trofast drawers
         y_back_offset = self.coordinates["drawer_positions"]["back_offset"].y
-        self.goto_pos([x, y + y_back_offset, -90])  # go to ahead
+        self.goto_pos([x, y + y_back_offset, -90])  # go to pulling position
         # self.goto_name("stair_like_drawer")  #goto_nameだとうまくいかない。pos
         self.change_pose("grasp_on_table")
         gripper.command(1)
@@ -428,8 +431,8 @@ class WrsMainController(object):
 
     def push_in_trofast(self, pos_x, pos_y, pos_z, yaw, pitch, roll):
         """
-        trofastの引き出しを戻す
-        NOTE:サンプル
+        push in the trofast drawers
+        NOTE:Sample
             self.push_in_trofast(0.178, -0.29, 0.75, -90, 100, 0)
         """
         self.goto_name("stair_like_drawer")
@@ -437,7 +440,7 @@ class WrsMainController(object):
         self.change_pose("grasp_on_table")
         pos_y += self.HAND_PALM_OFFSET
 
-        # 予備動作-押し込む
+        # Getting ready & Pushing in the drawer
         whole_body.move_end_effector_pose(
             pos_x, pos_y + self.TROFAST_Y_OFFSET * 1.5, pos_z, yaw, pitch, roll
         )
@@ -451,14 +454,14 @@ class WrsMainController(object):
 
     def deliver_to_target(self, target_obj, target_person):
         """
-        棚で取得したものを人に渡す。
+        Handing the Person the Object from the Shelf
         """
         self.change_pose("look_at_near_floor")
         self.goto_name("shelf")
         self.change_pose("look_at_shelf")
 
         rospy.loginfo("target_obj: " + target_obj + "  target_person: " + target_person)
-        # 物体検出結果から、把持するbboxを決定
+        # Decides which bbox to grasp from the object detection result
         detected_objs = self.get_latest_detection()
         grasp_bbox = self.get_most_graspable_bboxes_by_label(
             detected_objs.bboxes, target_obj
@@ -467,22 +470,22 @@ class WrsMainController(object):
             rospy.logwarn("Cannot find object to grasp. task2b is aborted.")
             return
 
-        # BBoxの3次元座標を取得して、その座標で把持する
+        # Get the 3D coordinates of the bbox and grasp at that location
         grasp_pos = self.get_grasp_coordinate(grasp_bbox)
         self.change_pose("grasp_on_shelf")
         self.grasp_from_front_side(grasp_pos)
         self.change_pose("all_neutral")
 
-        # target_personの前に持っていく
+        # Bring the object to the target_person
         self.change_pose("look_at_near_floor")
-        self.goto_name("person_b")  # TODO: 配達先が固定されているので修正
+        self.goto_name("person_b")  # TODO: The destination is fixed 
         self.change_pose("deliver_to_human")
         rospy.sleep(10.0)
         gripper.command(1)
         self.change_pose("all_neutral")
 
     def execute_avoid_blocks(self):
-        # blockを避ける
+        # Avoid Obstacles
         for i in range(3):
             detected_objs = self.get_latest_detection()
             print("detected_objs: ", detected_objs)
@@ -491,22 +494,23 @@ class WrsMainController(object):
             pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
             print("pos_bboxes: ", pos_bboxes)
             waypoint = self.select_next_waypoint(i, pos_bboxes)
-            # TODO メッセージを確認するためコメントアウトを外す
+            # TODO remove the commentout to check the message
             rospy.loginfo(waypoint)
             self.goto_pos(waypoint)
 
     def select_next_waypoint(self, current_stp, pos_bboxes):
         """
-        waypoints から近い場所にあるものを除外し、最適なwaypointを返す。
-        x座標を原点に近い方からxa,xb,xcに定義する。bboxを判断基準として移動先を決定する(デフォルトは0.45間隔)
-        pos_bboxesは get_grasp_coordinate() 済みであること
+        Remove Objects that are Close to the Waypoints and Return the Optimal Waypoint. 
+        xa, xb, xc are Defined in the Order that is Closer to the Origin (x coordinates).
+        Using bboxes as deciding factors to decide its desination (default is 0.45 aoart).
+        pos_bboxes are to have already been used get_grasp_coordinate().
         """
         interval = 0.45
         pos_xa = 1.7
         pos_xb = pos_xa + interval
         pos_xc = pos_xb + interval
 
-        # xa配列はcurrent_stpに関係している
+        # xa list is related to current_stp
         waypoints = {
             "xa": [[pos_xa, 2.5, 45], [pos_xa, 2.9, 45], [pos_xa, 3.3, 90]],
             "xb": [[pos_xb, 2.5, 90], [pos_xb, 2.9, 90], [pos_xb, 3.3, 90]],
@@ -514,6 +518,7 @@ class WrsMainController(object):
         }
 
         # posがxa,xb,xcのラインに近い場合は候補から削除
+        # pos that is close to xa, xb, xc line will be deleted from 
         is_to_xa = True
         is_to_xb = True
         is_to_xc = True
@@ -536,8 +541,8 @@ class WrsMainController(object):
                 # rospy.loginfo("is_to_xc=False")
                 continue
 
-        x_line = None  # xa,xb,xcいずれかのリストが入る
-        # NOTE 優先的にxcに移動する
+        x_line = None  # one of xa, xb, or xc is in here
+        # NOTE Priortize xc
         if is_to_xc:
             x_line = waypoints["xc"]
             rospy.loginfo("select next waypoint_xc")
@@ -548,7 +553,7 @@ class WrsMainController(object):
             x_line = waypoints["xa"]
             rospy.loginfo("select next waypoint_xa")
         else:
-            # a,b,cいずれにも移動できない場合
+            # if we cannot move to neither a, b, or c
             x_line = waypoints["xb"]
             rospy.loginfo("select default waypoint")
 
@@ -560,7 +565,7 @@ class WrsMainController(object):
 
     def open_drawer(self):
         drawer_positions = self.coordinates["drawer_positions"]
-        # top_pos = drawer_positions["drawer_top"] #topは開けない
+        # top_pos = drawer_positions["drawer_top"] #top does not open
         bottom_pos = drawer_positions["drawer_bottom"]
         left_pos = drawer_positions["drawer_left"]
         self.pull_out_trofast(
@@ -575,20 +580,20 @@ class WrsMainController(object):
         task1を実行する
         """
         rospy.loginfo("#### start Task 1 ####")
-        hsr_position = [  # 移動してほしい場所, ロボットの姿勢
+        hsr_position = [  # Locations for robot to go around, and its poses
             ("tall_table", "look_at_tall_table"),
             ("near_long_table_l", "look_at_near_floor"),
             ("long_table_r", "look_at_long_table"),
         ]
 
         for plc, pose in hsr_position:
-            while True:  # 各場所で物体がなくなるまでループ
-                # 移動と視線指示
+            while True:  # Loop until there are no objects in each of the places
+                # Movements and Vision Navigations
                 self.goto_name(plc)
                 self.change_pose(pose)
                 gripper.command(0)
 
-                # 把持対象の有無チェック
+                # Check if any graspable objects exist
                 detected_objs = self.get_latest_detection()
 
                 graspable_obj = self.get_most_graspable_obj(detected_objs.bboxes)
@@ -597,13 +602,14 @@ class WrsMainController(object):
                     rospy.logwarn(
                         "Cannot determine object to grasp. Grasping is aborted."
                     )
-                    break  # 物体がなければループを抜けて次の場所へ移動
+                    break  # if there are no objects, escape the loop and move to the next location
+                
 
                 label = graspable_obj["label"]
                 grasp_bbox = graspable_obj["bbox"]
                 rospy.loginfo("grasp the " + label)
 
-                # 把持対象がある場合は把持関数実施
+                # If there exists any graspable objects, execute the grasping funciton
                 grasp_pos = self.get_grasp_coordinate(grasp_bbox)
                 self.change_pose("grasp_on_table")
                 self.exec_graspable_method(grasp_pos, label)
@@ -624,7 +630,7 @@ class WrsMainController(object):
         self.change_pose("look_at_near_floor")
         self.goto_name("standby_2a")
 
-        # 落ちているブロックを避けて移動
+        # Move Avoiding the Obstacles
         self.execute_avoid_blocks()
 
         self.goto_name("go_throw_2a")
@@ -636,7 +642,7 @@ class WrsMainController(object):
         """
         rospy.loginfo("#### start Task 2b ####")
 
-        # 命令文を取得
+        # Get the instruction
         if self.instruction_list:
             latest_instruction = self.instruction_list[-1]
             rospy.loginfo("recieved instruction: %s", latest_instruction)
@@ -644,18 +650,18 @@ class WrsMainController(object):
             rospy.logwarn("instruction_list is None")
             return
 
-        # 命令内容を解釈
+        # Interpret the instrurction
         target_obj, target_person = self.extract_target_obj_and_person(
             latest_instruction
         )
 
-        # 指定したオブジェクトを指定した配達先へ
+        # Move the target object to target location
         if target_obj and target_person:
             self.deliver_to_target(target_obj, target_person)
 
     def run(self):
         """
-        全てのタスクを実行する
+        Execue All Tasks
         """
         self.goto_initial_place()
         self.open_drawer()
@@ -666,14 +672,14 @@ class WrsMainController(object):
 
 def main():
     """
-    WRS環境内でタスクを実行するためのメインノードを起動する
+    Activate the Main Node to Execute Tasks in the WRS Environment
     """
     rospy.init_node("main_controller")
     try:
         ctrl = WrsMainController()
         rospy.loginfo("node initialized [%s]", rospy.get_name())
 
-        # タスクの実行モードを確認する
+        # Check the task execution mode 
         if rospy.get_param("~test_mode", default=False) is True:
             rospy.loginfo("#### start with TEST mode. ####")
         else:
