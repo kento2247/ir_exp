@@ -649,9 +649,7 @@ def main():
 
 def check_drawerHeight(ctrl):
     ctrl.change_pose("all_neutral")
-    for i in range(30):
-        rospy.loginfo("moving to location z = [%d]", i / 10)
-        ctrl.pull_out_trofast(0.180, 0.0, i / 10, -90, -100, 0)
+    ctrl.pull_out_trofast(0.380, -0.2, -150, -90, -90, 0)
 
 
 if __name__ == "__main__":
