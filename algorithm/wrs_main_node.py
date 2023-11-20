@@ -47,9 +47,6 @@ class WrsMainController(object):
     HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.3
-    # is_drawer_left_open = False
-    # is_drawer_top_open = False
-    # is_drawer_bottom_open = False
 
     def __init__(self):
         # 変数の初期化
@@ -100,6 +97,7 @@ class WrsMainController(object):
     def load_json(path):
         """
         jsonファイルを辞書型で読み込む
+        変更不要
         """
         with open(path, "r") as json_file:
             return json.load(json_file)
@@ -107,6 +105,7 @@ class WrsMainController(object):
     def instruction_cb(self, msg):
         """
         指示文を受信する
+        変更不要
         """
         rospy.loginfo("instruction received. [%s]", msg.data)
         self.instruction_list.append(msg.data)
@@ -114,6 +113,7 @@ class WrsMainController(object):
     def detection_cb(self, msg):
         """
         検出結果を受信する
+        変更不要
         """
         rospy.loginfo("received [Collision detected with %s]", msg.data)
         self.detection_list.append(msg.data)
@@ -121,6 +121,7 @@ class WrsMainController(object):
     def get_relative_coordinate(self, parent, child):
         """
         tfで相対座標を取得する
+        変更不要
         """
         try:
             # 4秒待機して各tfが存在すれば相対関係をセット
@@ -143,18 +144,20 @@ class WrsMainController(object):
     def goto_name(self, name):
         """
         waypoint名で指定された場所に移動する
+        変更不要
         """
         if name in self.coordinates["positions"].keys():
             pos = self.coordinates["positions"][name]
             rospy.loginfo("go to [%s](%.2f, %.2f, %.2f)", name, pos[0], pos[1], pos[2])
             return omni_base.go_abs(pos[0], pos[1], pos[2])
-
-        rospy.logerr("unknown waypoint name [%s]", name)
-        return False
+        else:
+            rospy.logerr("unknown waypoint name [%s]", name)
+            return False
 
     def goto_pos(self, pos):
         """
         waypoint名で指定された場所に移動する
+        変更不要
         """
         rospy.loginfo("go to [raw_pos](%.2f, %.2f, %.2f)", pos[0], pos[1], pos[2])
         return omni_base.go_abs(pos[0], pos[1], pos[2])
@@ -162,6 +165,7 @@ class WrsMainController(object):
     def change_pose(self, name):
         """
         指定された姿勢名に遷移する
+        変更不要
         """
         if name in self.poses.keys():
             rospy.loginfo("change pose to [%s]", name)
@@ -182,6 +186,7 @@ class WrsMainController(object):
     def get_latest_detection(self):
         """
         最新の認識結果が到着するまで待つ
+        変更不要
         """
         res = self.detection_clt(GetObjectDetectionRequest())
         return res.bboxes
@@ -189,6 +194,7 @@ class WrsMainController(object):
     def get_grasp_coordinate(self, bbox):
         """
         BBox情報から把持座標を取得する
+        変更不要
         """
         # BBox情報からtfを生成して、座標を取得
         self.tf_from_bbox_clt.call(
@@ -201,6 +207,7 @@ class WrsMainController(object):
     def get_most_graspable_bbox(cls, obj_list):
         """
         最も把持が行えそうなbboxを一つ返す。
+        変更不要
         """
         # objが一つもない場合は、Noneを返す
         obj = cls.get_most_graspable_obj(obj_list)
@@ -258,6 +265,7 @@ class WrsMainController(object):
         """
         label名が一致するオブジェクトの中から最も把持すべき物体のbboxを返す
         label名でobj_listをフィルタリングして、get_most_graspable_bbox()を実行する
+        変更不要
         """
         match_objs = [obj for obj in obj_list if obj.label in label]
         if not match_objs:
@@ -269,6 +277,7 @@ class WrsMainController(object):
     def extract_target_obj_and_person(instruction):
         """
         指示文から対象となる物体名称と対象の人物を抽出する
+        変更不要
         """
         rospy.loginfo("[extract_target_obj_and_person] instruction:" + instruction)
 
@@ -336,6 +345,7 @@ class WrsMainController(object):
         """
         正面把持を行う
         ややアームを下に向けている
+        微調整必要かも
         """
         grasp_pos.y -= self.HAND_PALM_OFFSET
         rospy.loginfo(
@@ -350,6 +360,7 @@ class WrsMainController(object):
         """
         上面から把持を行う
         オブジェクトに寄るときは、y軸から近づく上面からは近づかない
+        微調整必要かも
         """
         grasp_pos.z += self.HAND_PALM_Z_OFFSET
         rospy.loginfo(
@@ -363,6 +374,7 @@ class WrsMainController(object):
     def exec_graspable_method(self, grasp_pos, label=""):
         """
         task1専用:posの位置によって把持方法を判定し実行する。
+        微調整必要かも
         """
         method = None
         graspable_y = 1.85  # これ以上奥は把持できない
