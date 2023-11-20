@@ -392,7 +392,7 @@ class WrsMainController(object):
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
         # trofastの引き出しを引き出す
-        self.goto_pos([0.18, 0, 0])
+        self.goto_pos([0.38, 0, -90])
         self.change_pose("grasp_on_table")
         gripper.command(1)
         whole_body.move_end_effector_pose(
@@ -646,9 +646,12 @@ def main():
         pass
 
 
+
 def check_drawerHeight(ctrl):
     ctrl.change_pose("all_neutral")
-    ctrl.pull_out_trofast(0.180, -2.0, -150, -90, -90, 0)
+    for i in range(30):
+        rospy.loginfo("moving to location z = [%d]", i / 10)
+        ctrl.pull_out_trofast(0.180, 0.0, i / 10, -90, -100, 0)
 
 
 if __name__ == "__main__":
