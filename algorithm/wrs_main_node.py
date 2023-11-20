@@ -13,6 +13,7 @@ import traceback
 from select import select
 from turtle import pos
 
+import putIn_positionLabel as PLM
 import rospkg
 import rospy
 import tf2_ros
@@ -24,10 +25,6 @@ from detector_msgs.srv import (
 )
 from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
-
-from PositionLabelManager import PositionLabelManager
-
-PLM = PositionLabelManager()  # PositionLabelManagerクラスのインスタンスを作成
 
 
 class WrsMainController(object):
@@ -252,6 +249,7 @@ class WrsMainController(object):
     def get_most_graspable_bboxes_by_label(cls, obj_list, label):
         """
         label名が一致するオブジェクトの中から最も把持すべき物体のbboxを返す
+        label名でobj_listをフィルタリングして、get_most_graspable_bbox()を実行する
         """
         match_objs = [obj for obj in obj_list if obj.label in label]
         if not match_objs:
@@ -577,7 +575,7 @@ class WrsMainController(object):
                 #     self.put_in_place("bin_b_place", "put_in_bin")
                 # total_cnt += 1
 
-                # place_obj = PositionLabelManager.get(label)
+                # place_obj = PLM.get_putIn_positionLabel("credit_card_blank")
                 # place = place_obj["place"]
                 # deposit = place_obj["deposit"]
                 # self.put_in_place(deposit, "put_in_bin")
@@ -630,91 +628,91 @@ class WrsMainController(object):
         self.execute_task1()
         # self.execute_task2a()
         # self.execute_task2b()
+
     def positionChecker(self):
         position_list = [
-          "position_1",
-          "position_2",
-          "position_3",
-          "position_4",
-          "position_5",
-          "position_6",
-          "position_7",
-          "position_8",
-          "position_9",
-          "position_10",
-          "position_11",
-          "position_12",
-          "position_13",
-          "position_14",
-          "position_15",
-          "position_16",
-          "position_17",
-          "position_18",
-          "position_19",
-          "position_20",
-          "position_21",
-          "position_22",
-          "position_23",
-          "position_24",
-          "position_25",
-          "position_26",
-          "position_27",
-          "position_28",
-          "position_29",
-          "position_30",
-          "position_31",
-          "position_32",
-          "position_33",
-          "position_34",
-          "position_35",
-          "position_36",
-          "position_37",
-          "position_38",
-          "position_39",
-          "position_40",
-          "position_41",
-          "position_42",
-          "position_43",
-          "position_44",
-          "position_45",
-          "position_46",
-          "position_47",
-          "position_48",
-          "position_49",
-          "position_50",
-          "position_51",
-          "position_52",
-          "position_53",
-          "position_54",
-          "position_55",
-          "position_56",
-          "position_57",
-          "position_58",
-          "position_59",
-          "position_60",
-          "position_61",
-          "position_62",
-          "position_63",
-          "position_64",
-          "position_65",
-          "position_66",
-          "position_67",
-          "position_68",
-          "position_69",
-          "position_70",
-          "position_71",
-          "position_72",
-          "position_73",
-          "position_74",
-          "position_75",
-          "position_76",
-          "position_77",
-          "position_78"
+            "position_1",
+            "position_2",
+            "position_3",
+            "position_4",
+            "position_5",
+            "position_6",
+            "position_7",
+            "position_8",
+            "position_9",
+            "position_10",
+            "position_11",
+            "position_12",
+            "position_13",
+            "position_14",
+            "position_15",
+            "position_16",
+            "position_17",
+            "position_18",
+            "position_19",
+            "position_20",
+            "position_21",
+            "position_22",
+            "position_23",
+            "position_24",
+            "position_25",
+            "position_26",
+            "position_27",
+            "position_28",
+            "position_29",
+            "position_30",
+            "position_31",
+            "position_32",
+            "position_33",
+            "position_34",
+            "position_35",
+            "position_36",
+            "position_37",
+            "position_38",
+            "position_39",
+            "position_40",
+            "position_41",
+            "position_42",
+            "position_43",
+            "position_44",
+            "position_45",
+            "position_46",
+            "position_47",
+            "position_48",
+            "position_49",
+            "position_50",
+            "position_51",
+            "position_52",
+            "position_53",
+            "position_54",
+            "position_55",
+            "position_56",
+            "position_57",
+            "position_58",
+            "position_59",
+            "position_60",
+            "position_61",
+            "position_62",
+            "position_63",
+            "position_64",
+            "position_65",
+            "position_66",
+            "position_67",
+            "position_68",
+            "position_69",
+            "position_70",
+            "position_71",
+            "position_72",
+            "position_73",
+            "position_74",
+            "position_75",
+            "position_76",
+            "position_77",
+            "position_78",
         ]
         rospy.loginfo("####  Task Checker ####")
         for plc in position_list:
             self.put_in_place(plc, "put_in_bin")
-
 
 
 def main():
