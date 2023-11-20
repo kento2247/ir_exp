@@ -56,6 +56,10 @@ class WrsMainController(object):
         self.coordinates = self.load_json(self.get_path(["config", "coordinates.json"]))
         self.poses = self.load_json(self.get_path(["config", "poses.json"]))
 
+        self.positionLabels = self.load_json(
+            self.get_path(["config", "positionLabels.json"])
+        )
+
         # ROS通信関連の初期化
         tf_from_bbox_srv_name = "set_tf_from_bbox"
         rospy.wait_for_service(tf_from_bbox_srv_name)
@@ -548,7 +552,9 @@ class WrsMainController(object):
 
                 # 把持対象の有無チェック
                 detected_objs = self.get_latest_detection()
-                rospy.loginfo("\n\ndetected: " + label + "\n\n")
+                rospy.loginfo(
+                    "\n\ndetected: " + detected_objs + "\n\n"
+                )  # debug algorithmを考える上で必要
 
                 graspable_obj = self.get_most_graspable_obj(detected_objs.bboxes)
 
@@ -575,10 +581,12 @@ class WrsMainController(object):
                 #     self.put_in_place("bin_b_place", "put_in_bin")
                 # total_cnt += 1
 
-                # place_obj = PLM.get_putIn_positionLabel("credit_card_blank")
-                # place = place_obj["place"]
-                # deposit = place_obj["deposit"]
-                # self.put_in_place(deposit, "put_in_bin")
+                place_obj = PLM.get_putIn_positionLabel(
+                    self.positionLabels, "credit_card_blank"
+                )
+                place = place_obj["place"]
+                deposit = place_obj["deposit"]
+                self.put_in_place(deposit, "put_in_bin")
                 self.positionChecker()
 
     def execute_task2a(self):
