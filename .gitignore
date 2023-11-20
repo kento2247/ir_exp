@@ -1,0 +1,5 @@
+py*
+.vscode
+*.pdf
+debug.*
+algorithm/debug*
