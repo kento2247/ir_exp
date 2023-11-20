@@ -398,8 +398,9 @@ class WrsMainController(object):
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
         # trofastの引き出しを引き出す
-        self.goto_pos([x, y + 0.4, -90])
-        # self.goto_name("stair_like_drawer")
+        y_back_offset = self.coordinates["drawer_positions"]["back_offset"].y
+        self.goto_pos([x, y + y_back_offset, -90])  # go to ahead
+        # self.goto_name("stair_like_drawer")  #goto_nameだとうまくいかない。pos
         self.change_pose("grasp_on_table")
         gripper.command(1)
         whole_body.move_end_effector_pose(
@@ -541,6 +542,22 @@ class WrsMainController(object):
 
         return x_line[current_stp]
 
+    def goto_initial_place(self):
+        self.goto_name("initial_place")
+        self.change_pose("all_neutral")
+
+    def open_drawer(self):
+        drawer_positions = self.coordinates["drawer_positions"]
+        # top_pos = drawer_positions["drawer_top"] #topは開けない
+        bottom_pos = drawer_positions["drawer_bottom"]
+        left_pos = drawer_positions["drawer_left"]
+        self.pull_out_trofast(
+            bottom_pos.x, bottom_pos.y, bottom_pos.z, -90, 100, 0
+        )  # drawer right(top and bottom)
+        self.pull_out_trofast(
+            left_pos.x, left_pos.y, left_pos.z, -90, 100, 0
+        )  # drawer left
+
     def execute_task1(self):
         """
         task1を実行する
@@ -628,8 +645,8 @@ class WrsMainController(object):
         """
         全てのタスクを実行する
         """
-        self.goto_name("initial_place")  # restartするのめんどいから
-        self.change_pose("all_neutral")
+        self.goto_initial_place()
+        self.open_drawer()
         self.execute_task1()
         # self.execute_task2a()
         # self.execute_task2b()
@@ -649,19 +666,10 @@ def main():
             rospy.loginfo("#### start with TEST mode. ####")
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
-            check_drawerHeight(ctrl)
             ctrl.run()
-            # check_drawerHeight(ctrl)  # debug
 
     except rospy.ROSInterruptException:
         pass
-
-
-def check_drawerHeight(ctrl):
-    ctrl.goto_name("initial_place")  # restartするのめんどいから
-    ctrl.change_pose("all_neutral")
-    ctrl.pull_out_trofast(0.170, -0.29, 0.3, -90, 100, 0)
-    ctrl.pull_out_trofast(0.470, -0.29, 0.3, -90, 100, 0)
 
 
 if __name__ == "__main__":

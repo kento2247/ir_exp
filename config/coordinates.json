@@ -48,5 +48,25 @@
       "person_b",
       "home"
     ]
+  },
+  "drawer_positions": {
+    "drawer_top": {
+      "x": 0.17,
+      "y": -0.29,
+      "z": null
+    },
+    "drawer_bottom": {
+      "x": 0.17,
+      "y": -0.29,
+      "z": 0.3
+    },
+    "drawer_left": {
+      "x": 0.47,
+      "y": -0.29,
+      "z": 0.3
+    },
+    "back_offset": {
+      "y": 0.4
+    }
   }
 }
