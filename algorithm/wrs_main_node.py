@@ -397,7 +397,7 @@ class WrsMainController(object):
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
         # trofastの引き出しを引き出す
-        self.goto_pos([x, y+0.4, -90])
+        self.goto_pos([x, y + 0.4, -90])
         # self.goto_name("stair_like_drawer")
         self.change_pose("grasp_on_table")
         gripper.command(1)
@@ -419,7 +419,7 @@ class WrsMainController(object):
             self.push_in_trofast(0.178, -0.29, 0.75, -90, 100, 0)
         """
         self.goto_name("stair_like_drawer")
-        
+
         self.change_pose("grasp_on_table")
         pos_y += self.HAND_PALM_OFFSET
 
@@ -659,8 +659,8 @@ def main():
 def check_drawerHeight(ctrl):
     ctrl.goto_name("initial_place")  # restartするのめんどいから
     ctrl.change_pose("all_neutral")
-    ctrl.pull_out_trofast(0.178, -0.29, 0.3, -90, 100, 0)
-    ctrl.pull_out_trofast(0.508, -0.29, 0.3, -90, 100, 0)
+    ctrl.pull_out_trofast(0.170, -0.29, 0.3, -90, 100, 0)
+    ctrl.pull_out_trofast(0.500, -0.29, 0.3, -90, 100, 0)
 
 
 if __name__ == "__main__":
