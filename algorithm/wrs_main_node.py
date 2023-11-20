@@ -264,12 +264,13 @@ class WrsMainController(object):
     @staticmethod
     def extract_target_obj_and_person(instruction):
         """
-        指示文から対象となる物体名称を抽出する
+        指示文から対象となる物体名称と対象の人物を抽出する
         """
-        # TODO: 関数は未完成です。引数のinstructionを利用すること
         rospy.loginfo("[extract_target_obj_and_person] instruction:" + instruction)
-        target_obj = "apple"
-        target_person = "right"
+        
+        parts = instruction.split(' to ')
+        target_obj = parts[0]
+        target_person = parts[1].split(' ')[1]
 
         return target_obj, target_person
 
@@ -650,7 +651,11 @@ def main():
 def check_drawerHeight(ctrl):
     ctrl.goto_name("initial_place")  # restartするのめんどいから
     ctrl.change_pose("all_neutral")
+<<<<<<< HEAD
     ctrl.pull_out_trofast(0.178, 0.3, -200, -90, -90, 0)
+=======
+    ctrl.pull_out_trofast(0.178, -0.2, -150, -90, -90, 0)
+>>>>>>> a27c48bd65ee5323ceb9a09e6c5c08ddcab98490
 
 
 if __name__ == "__main__":
