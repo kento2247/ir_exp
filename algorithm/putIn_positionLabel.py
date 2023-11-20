@@ -9,4 +9,5 @@ def get_putIn_positionLabel(positionLabels_dict, label):
             "Tray_A" if food_labels_call_count % 2 == 0 else "Tray_B"
         )
         food_labels_call_count += 1
+    print("position manager:\n  target_position: ", target_position)
     return target_position
