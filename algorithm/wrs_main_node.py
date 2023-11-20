@@ -46,6 +46,9 @@ class WrsMainController(object):
     HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.2
+    # is_drawer_left_open = False
+    # is_drawer_top_open = False
+    # is_drawer_bottom_open = False
 
     def __init__(self):
         # 変数の初期化
@@ -267,10 +270,10 @@ class WrsMainController(object):
         指示文から対象となる物体名称と対象の人物を抽出する
         """
         rospy.loginfo("[extract_target_obj_and_person] instruction:" + instruction)
-        
-        parts = instruction.split(' to ')
+
+        parts = instruction.split(" to ")
         target_obj = parts[0]
-        target_person = parts[1].split(' ')[1]
+        target_person = parts[1].split(" ")[1]
 
         return target_obj, target_person
 
@@ -577,6 +580,8 @@ class WrsMainController(object):
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
+                if deposit == "Drawer_top":
+                    deposit = "Drawer_bottom"
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
