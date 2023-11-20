@@ -574,13 +574,6 @@ class WrsMainController(object):
                 self.exec_graspable_method(grasp_pos, label)
                 self.change_pose("all_neutral")
 
-                # binに入れる
-                # if total_cnt % 2 == 0:
-                #     self.put_in_place("bin_a_place", "put_in_bin")
-                # else:
-                #     self.put_in_place("bin_b_place", "put_in_bin")
-                # total_cnt += 1
-
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
@@ -733,15 +726,19 @@ def main():
         # タスクの実行モードを確認する
         if rospy.get_param("~test_mode", default=False) is True:
             rospy.loginfo("#### start with TEST mode. ####")
-            for i in range(30):
-                print("moving to location z = " + i / 10)
-                ctrl.pull_out_trofast(0.180, 0.0, i / 10, -90, -100, 0)
+            check_drawerHeight(ctrl)  # debug
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
             ctrl.run()
 
     except rospy.ROSInterruptException:
         pass
+
+
+def check_drawerHeight(ctrl):
+    for i in range(30):
+        rospy.loginfo("moving to location z = [%d]", i / 10)
+        ctrl.pull_out_trofast(0.180, 0.0, i / 10, -90, -100, 0)
 
 
 if __name__ == "__main__":
