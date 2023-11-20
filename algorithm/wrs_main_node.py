@@ -392,7 +392,7 @@ class WrsMainController(object):
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
         # trofastの引き出しを引き出す
-        self.goto_name("stair_like_drawer")
+        self.goto_pos([0.38, 0, -90])
         self.change_pose("grasp_on_table")
         gripper.command(1)
         whole_body.move_end_effector_pose(
@@ -536,7 +536,6 @@ class WrsMainController(object):
         """
         rospy.loginfo("#### start Task 1 ####")
         hsr_position = [  # 移動してほしい場所, ロボットの姿勢
-            ("initial_position", "look_at_tall_table"),
             ("tall_table", "look_at_tall_table"),
             ("near_long_table_l", "look_at_near_floor"),
             ("long_table_r", "look_at_long_table"),
@@ -575,6 +574,23 @@ class WrsMainController(object):
                 place = place_obj["place"]  # placeを示すlabel(String)が与えられる。資料42p参照
                 deposit = place_obj["deposit"]  # 同上。資料42p参照
                 self.put_in_place(deposit, "put_in_bin")
+
+    def execute_task2a(self):
+        """
+        task2aを実行する
+        """
+        rospy.loginfo("#### start Task 2a ####")
+        self.change_pose("look_at_near_floor")
+        gripper.command(0)
+        self.change_pose("look_at_near_floor")
+        self.goto_name("standby_2a")
+
+        # 落ちているブロックを避けて移動
+        self.execute_avoid_blocks()
+
+        self.goto_name("go_throw_2a")
+        whole_body.move_to_go()
+
     def execute_task2b(self):
         """
         task2bを実行する
@@ -603,8 +619,8 @@ class WrsMainController(object):
         全てのタスクを実行する
         """
         self.change_pose("all_neutral")
-        self.execute_task1()
-        # self.execute_task2a()
+        # self.execute_task1()
+        self.execute_task2a()
         # self.execute_task2b()
 
 
@@ -622,6 +638,7 @@ def main():
             rospy.loginfo("#### start with TEST mode. ####")
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
+            check_drawerHeight(ctrl)
             ctrl.run()
             # check_drawerHeight(ctrl)  # debug
 
@@ -629,11 +646,10 @@ def main():
         pass
 
 
+
 def check_drawerHeight(ctrl):
     ctrl.change_pose("all_neutral")
-    for i in range(30):
-        rospy.loginfo("moving to location z = [%d]", i / 10)
-        ctrl.pull_out_trofast(0.180, 0.0, i / 10, -90, -100, 0)
+    ctrl.pull_out_trofast(0.380, -0.2, -150, -90, -90, 0)
 
 
 if __name__ == "__main__":
