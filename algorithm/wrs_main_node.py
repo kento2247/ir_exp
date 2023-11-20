@@ -581,9 +581,7 @@ class WrsMainController(object):
                 #     self.put_in_place("bin_b_place", "put_in_bin")
                 # total_cnt += 1
 
-                place_obj = PLM.get_putIn_positionLabel(
-                    self.positionLabels, "credit_card_blank"
-                )
+                place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
                 self.put_in_place(deposit, "put_in_bin")
@@ -736,8 +734,8 @@ def main():
         if rospy.get_param("~test_mode", default=False) is True:
             rospy.loginfo("#### start with TEST mode. ####")
             for i in range(30):
-                print("moving to location z = " + i/10)
-                ctrl.pull_out_trofast(0.180, 0.0, i/10, -90, -100, 0)
+                print("moving to location z = " + i / 10)
+                ctrl.pull_out_trofast(0.180, 0.0, i / 10, -90, -100, 0)
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
             ctrl.run()
