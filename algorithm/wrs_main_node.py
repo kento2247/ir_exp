@@ -209,6 +209,7 @@ class WrsMainController(object):
         """
         把持すべきscoreが最も高い物体を返す。
         """
+        print("obj list: ", obj_list)
         extracted = []
         extract_str = "detected object list\n"
         ignore_str = ""
