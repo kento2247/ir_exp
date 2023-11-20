@@ -121,7 +121,7 @@ class WrsMainController(object):
         try:
             # 4秒待機して各tfが存在すれば相対関係をセット
             trans = self.tf_buffer.lookup_transform(
-                parent, child, rospy.Time.now(), rospy.Duration(4.0)
+                parent, child, rospy.Time.now(), rospy.Duration(2.0)
             )
             return trans.transform
         except (
@@ -209,6 +209,7 @@ class WrsMainController(object):
         """
         把持すべきscoreが最も高い物体を返す。
         """
+        print("obj list: ", obj_list)
         extracted = []
         extract_str = "detected object list\n"
         ignore_str = ""
@@ -541,9 +542,8 @@ class WrsMainController(object):
             ("long_table_r", "look_at_long_table"),
         ]
 
-        total_cnt = 0
         for plc, pose in hsr_position:
-            for _ in range(self.DETECT_CNT):
+            while True:  # 各場所で物体がなくなるまでループ
                 # 移動と視線指示
                 self.goto_name(plc)
                 self.change_pose(pose)
@@ -558,10 +558,10 @@ class WrsMainController(object):
                     rospy.logwarn(
                         "Cannot determine object to grasp. Grasping is aborted."
                     )
-                    continue
+                    break  # 物体がなければループを抜けて次の場所へ移動
+
                 label = graspable_obj["label"]
                 grasp_bbox = graspable_obj["bbox"]
-                # TODO ラベル名を確認するためにコメントアウトを外す
                 rospy.loginfo("grasp the " + label)
 
                 # 把持対象がある場合は把持関数実施
@@ -571,8 +571,8 @@ class WrsMainController(object):
                 self.change_pose("all_neutral")
 
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
-                place = place_obj["place"]  # placeを示すlabel(String)が与えられる。資料42p参照
-                deposit = place_obj["deposit"]  # 同上。資料42p参照
+                place = place_obj["place"]
+                deposit = place_obj["deposit"]
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
@@ -618,6 +618,7 @@ class WrsMainController(object):
         """
         全てのタスクを実行する
         """
+        self.goto_name("initial_place")  # restartするのめんどいから
         self.change_pose("all_neutral")
         self.execute_task1()
         # self.execute_task2a()
@@ -647,6 +648,7 @@ def main():
 
 
 def check_drawerHeight(ctrl):
+    ctrl.goto_name("initial_place")  # restartするのめんどいから
     ctrl.change_pose("all_neutral")
     ctrl.pull_out_trofast(0.178, 0.3, -200, -90, -90, 0)
 
