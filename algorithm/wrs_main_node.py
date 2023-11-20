@@ -639,7 +639,7 @@ def main():
 
         # タスクの実行モードを確認する
         if rospy.get_param("~test_mode", default=False) is True:
-            rospy.loginfo(json.stringify(ctrl.positionLabels))
+            rospy.loginfo(json.dumps(ctrl.positionLabels))
             rospy.loginfo("#### start with TEST mode. ####")
             check_drawerHeight(ctrl)  # debug
         else:
