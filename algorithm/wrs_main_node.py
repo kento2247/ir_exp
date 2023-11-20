@@ -551,9 +551,6 @@ class WrsMainController(object):
 
                 # 把持対象の有無チェック
                 detected_objs = self.get_latest_detection()
-                rospy.loginfo(
-                    "\n\ndetected: " + detected_objs + "\n\n"
-                )  # debug algorithmを考える上で必要
 
                 graspable_obj = self.get_most_graspable_obj(detected_objs.bboxes)
 
