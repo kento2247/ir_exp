@@ -38,6 +38,7 @@ class WrsMainController(object):
         "lego_duplo",
         "spatula",
         "nine_hole_peg_test",
+        "plum",
     ]
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
