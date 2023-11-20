@@ -573,6 +573,7 @@ class WrsMainController(object):
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
                 place = place_obj["place"]  # placeを示すlabel(String)が与えられる。資料42p参照
                 deposit = place_obj["deposit"]  # 同上。資料42p参照
+                deposit = "Bin_A"
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
