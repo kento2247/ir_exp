@@ -536,7 +536,7 @@ class WrsMainController(object):
         task1を実行する
         """
         rospy.loginfo("#### start Task 1 ####")
-        hsr_position = [  # 移動してほしい場所, 視線を向ける方向
+        hsr_position = [  # 移動してほしい場所, ロボットの姿勢
             ("tall_table", "look_at_tall_table"),
             # ("near_long_table_l", "look_at_near_floor"),
             # ("long_table_r", "look_at_long_table"),
