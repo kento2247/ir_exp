@@ -638,7 +638,7 @@ def main():
             rospy.loginfo("#### start with TEST mode. ####")
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
-            check_drawerHeight(ctrl)
+            # check_drawerHeight(ctrl)
             ctrl.run()
             # check_drawerHeight(ctrl)  # debug
 
