@@ -648,6 +648,7 @@ def main():
 
 
 def check_drawerHeight(ctrl):
+    ctrl.goto_name("initial_place")  # restartするのめんどいから
     ctrl.change_pose("all_neutral")
     ctrl.pull_out_trofast(0.380, -0.2, -150, -90, -90, 0)
 
