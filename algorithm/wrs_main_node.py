@@ -574,7 +574,6 @@ class WrsMainController(object):
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
                 self.put_in_place(deposit, "put_in_bin")
-                self.positionChecker()
 
     def execute_task2a(self):
         """

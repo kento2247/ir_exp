@@ -3,4 +3,4 @@ py*
 *.pdf
 debug.*
 algorithm/debug*
-cheker*
+checker*
