@@ -618,6 +618,7 @@ class WrsMainController(object):
         """
         全てのタスクを実行する
         """
+        self.goto_name("initial_place")  # restartするのめんどいから
         self.change_pose("all_neutral")
         self.execute_task1()
         # self.execute_task2a()
