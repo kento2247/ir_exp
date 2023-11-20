@@ -727,7 +727,9 @@ def main():
         # タスクの実行モードを確認する
         if rospy.get_param("~test_mode", default=False) is True:
             rospy.loginfo("#### start with TEST mode. ####")
-            ctrl.check_positions()
+            for i in range(30):
+                print("moving to location z = " + i/10)
+                ctrl.pull_out_trofast(0.180, 0.0, i/10, -90, -100, 0)
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
             ctrl.run()
