@@ -4,3 +4,4 @@ py*
 debug.*
 algorithm/debug*
 checker*
+.DS_store
