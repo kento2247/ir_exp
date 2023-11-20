@@ -55,6 +55,9 @@ class WrsMainController(object):
         # configファイルの受信
         self.coordinates = self.load_json(self.get_path(["config", "coordinates.json"]))
         self.poses = self.load_json(self.get_path(["config", "poses.json"]))
+        self.positionLabels = self.load_json(
+            self.get_path(["config", "positionLabels.json"])
+        )
 
         # ROS通信関連の初期化
         tf_from_bbox_srv_name = "set_tf_from_bbox"
@@ -389,7 +392,7 @@ class WrsMainController(object):
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
         # trofastの引き出しを引き出す
-        self.goto_name("stair_like_drawer")
+        self.goto_pos([0.18, 0, 0])
         self.change_pose("grasp_on_table")
         gripper.command(1)
         whole_body.move_end_effector_pose(
@@ -532,10 +535,10 @@ class WrsMainController(object):
         task1を実行する
         """
         rospy.loginfo("#### start Task 1 ####")
-        hsr_position = [  # 移動してほしい場所, 視線を向ける方向
+        hsr_position = [  # 移動してほしい場所, ロボットの姿勢
             ("tall_table", "look_at_tall_table"),
-            # ("near_long_table_l", "look_at_near_floor"),
-            # ("long_table_r", "look_at_long_table"),
+            ("near_long_table_l", "look_at_near_floor"),
+            ("long_table_r", "look_at_long_table"),
         ]
 
         total_cnt = 0
@@ -548,7 +551,6 @@ class WrsMainController(object):
 
                 # 把持対象の有無チェック
                 detected_objs = self.get_latest_detection()
-                rospy.loginfo("\n\ndetected: " + label + "\n\n")
 
                 graspable_obj = self.get_most_graspable_obj(detected_objs.bboxes)
 
@@ -568,18 +570,10 @@ class WrsMainController(object):
                 self.exec_graspable_method(grasp_pos, label)
                 self.change_pose("all_neutral")
 
-                # binに入れる
-                # if total_cnt % 2 == 0:
-                #     self.put_in_place("bin_a_place", "put_in_bin")
-                # else:
-                #     self.put_in_place("bin_b_place", "put_in_bin")
-                # total_cnt += 1
-
-                # place_obj = PLM.get_putIn_positionLabel("credit_card_blank")
-                # place = place_obj["place"]
-                # deposit = place_obj["deposit"]
-                # self.put_in_place(deposit, "put_in_bin")
-                self.positionChecker()
+                place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
+                place = place_obj["place"]  # placeを示すlabel(String)が与えられる。資料42p参照
+                deposit = place_obj["deposit"]  # 同上。資料42p参照
+                self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
         """
@@ -625,94 +619,9 @@ class WrsMainController(object):
         全てのタスクを実行する
         """
         self.change_pose("all_neutral")
-        self.execute_task1()
-        # self.execute_task2a()
+        # self.execute_task1()
+        self.execute_task2a()
         # self.execute_task2b()
-
-    def positionChecker(self):
-        position_list = [
-            "position_1",
-            "position_2",
-            "position_3",
-            "position_4",
-            "position_5",
-            "position_6",
-            "position_7",
-            "position_8",
-            "position_9",
-            "position_10",
-            "position_11",
-            "position_12",
-            "position_13",
-            "position_14",
-            "position_15",
-            "position_16",
-            "position_17",
-            "position_18",
-            "position_19",
-            "position_20",
-            "position_21",
-            "position_22",
-            "position_23",
-            "position_24",
-            "position_25",
-            "position_26",
-            "position_27",
-            "position_28",
-            "position_29",
-            "position_30",
-            "position_31",
-            "position_32",
-            "position_33",
-            "position_34",
-            "position_35",
-            "position_36",
-            "position_37",
-            "position_38",
-            "position_39",
-            "position_40",
-            "position_41",
-            "position_42",
-            "position_43",
-            "position_44",
-            "position_45",
-            "position_46",
-            "position_47",
-            "position_48",
-            "position_49",
-            "position_50",
-            "position_51",
-            "position_52",
-            "position_53",
-            "position_54",
-            "position_55",
-            "position_56",
-            "position_57",
-            "position_58",
-            "position_59",
-            "position_60",
-            "position_61",
-            "position_62",
-            "position_63",
-            "position_64",
-            "position_65",
-            "position_66",
-            "position_67",
-            "position_68",
-            "position_69",
-            "position_70",
-            "position_71",
-            "position_72",
-            "position_73",
-            "position_74",
-            "position_75",
-            "position_76",
-            "position_77",
-            "position_78",
-        ]
-        rospy.loginfo("####  Task Checker ####")
-        for plc in position_list:
-            self.put_in_place(plc, "put_in_bin")
 
 
 def main():
@@ -727,15 +636,19 @@ def main():
         # タスクの実行モードを確認する
         if rospy.get_param("~test_mode", default=False) is True:
             rospy.loginfo("#### start with TEST mode. ####")
-            for i in range(30):
-                print("moving to location z = " + i/10)
-                ctrl.pull_out_trofast(0.180, 0.0, i/10, -90, -100, 0)
         else:
             rospy.loginfo("#### start with NORMAL mode. ####")
+            check_drawerHeight(ctrl)
             ctrl.run()
+            # check_drawerHeight(ctrl)  # debug
 
     except rospy.ROSInterruptException:
         pass
+
+
+def check_drawerHeight(ctrl):
+    ctrl.change_pose("all_neutral")
+    ctrl.pull_out_trofast(0.180, -2.0, -150, -90, -90, 0)
 
 
 if __name__ == "__main__":
