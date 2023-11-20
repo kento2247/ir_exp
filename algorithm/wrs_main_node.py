@@ -55,7 +55,6 @@ class WrsMainController(object):
         # configファイルの受信
         self.coordinates = self.load_json(self.get_path(["config", "coordinates.json"]))
         self.poses = self.load_json(self.get_path(["config", "poses.json"]))
-
         self.positionLabels = self.load_json(
             self.get_path(["config", "positionLabels.json"])
         )
@@ -640,6 +639,7 @@ def main():
 
         # タスクの実行モードを確認する
         if rospy.get_param("~test_mode", default=False) is True:
+            rospy.loginfo(json.stringify(ctrl.positionLabels))
             rospy.loginfo("#### start with TEST mode. ####")
             check_drawerHeight(ctrl)  # debug
         else:
