@@ -466,8 +466,11 @@ class WrsMainController(object):
         # blockを避ける
         for i in range(3):
             detected_objs = self.get_latest_detection()
+            print("detected_objs: ", detected_objs)
             bboxes = detected_objs.bboxes
+            print("bboxes: ", bboxes)
             pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
+            print("pos_bboxes: ", pos_bboxes)
             waypoint = self.select_next_waypoint(i, pos_bboxes)
             # TODO メッセージを確認するためコメントアウトを外す
             rospy.loginfo(waypoint)
