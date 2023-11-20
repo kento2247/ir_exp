@@ -580,8 +580,6 @@ class WrsMainController(object):
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
-                if deposit == "Drawer_top":
-                    deposit = "Drawer_bottom"
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
