@@ -536,6 +536,7 @@ class WrsMainController(object):
         """
         rospy.loginfo("#### start Task 1 ####")
         hsr_position = [  # 移動してほしい場所, ロボットの姿勢
+            ("initial_position", "look_at_tall_table"),
             ("tall_table", "look_at_tall_table"),
             ("near_long_table_l", "look_at_near_floor"),
             ("long_table_r", "look_at_long_table"),
@@ -574,23 +575,6 @@ class WrsMainController(object):
                 place = place_obj["place"]  # placeを示すlabel(String)が与えられる。資料42p参照
                 deposit = place_obj["deposit"]  # 同上。資料42p参照
                 self.put_in_place(deposit, "put_in_bin")
-
-    def execute_task2a(self):
-        """
-        task2aを実行する
-        """
-        rospy.loginfo("#### start Task 2a ####")
-        self.change_pose("look_at_near_floor")
-        gripper.command(0)
-        self.change_pose("look_at_near_floor")
-        self.goto_name("standby_2a")
-
-        # 落ちているブロックを避けて移動
-        self.execute_avoid_blocks()
-
-        self.goto_name("go_throw_2a")
-        whole_body.move_to_go()
-
     def execute_task2b(self):
         """
         task2bを実行する
