@@ -2,7 +2,6 @@ food_labels_call_count = 0
 
 
 def get_putIn_positionLabel(positionLabels_dict, label):
-    """62112607 戸倉健登"""
     global food_labels_call_count
     target_position = {}
     if label in positionLabels_dict:
