@@ -550,6 +550,8 @@ class WrsMainController(object):
 
                 # 把持対象の有無チェック
                 detected_objs = self.get_latest_detection()
+                rospy.loginfo("\ndetected: " + detected_objs + "\n")
+
                 graspable_obj = self.get_most_graspable_obj(detected_objs.bboxes)
 
                 if graspable_obj is None:
