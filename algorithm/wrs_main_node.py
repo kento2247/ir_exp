@@ -480,8 +480,9 @@ class WrsMainController(object):
         for i in range(3):
             detected_objs = self.get_latest_detection()
             print("detected_objs: ", detected_objs)
-            bboxes = detected_objs.bboxes
+            bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
             print("bboxes: ", bboxes)
+            # bboxes=[{x:n,y:n,w:n,h:n,label:n,score:n}]かな？
             pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
             print("pos_bboxes: ", pos_bboxes)
             waypoint = self.select_next_waypoint(i, pos_bboxes)
@@ -611,10 +612,11 @@ class WrsMainController(object):
     def execute_task2a(self):
         """
         task2aを実行する
+        障害物を避けながらroom1からroom2へ移動する
         """
         rospy.loginfo("#### start Task 2a ####")
-        self.change_pose("look_at_near_floor")
-        gripper.command(0)
+        self.change_pose("look_at_near_floor")  # 下を見ないと物体検知できない
+        gripper.command(0)  # close the hand
         self.change_pose("look_at_near_floor")
         self.goto_name("standby_2a")
 
