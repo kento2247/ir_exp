@@ -32,14 +32,6 @@ class WrsMainController(object):
     WRSのシミュレーション環境内でタスクを実行するクラス
     """
 
-    IGNORE_LIST = [  # 把持しづらそうだから把持対象から除外する物体のラベル
-        "small_marker",
-        "large_marker",
-        "lego_duplo",
-        "spatula",
-        "nine_hole_peg_test",
-        "plum",
-    ]
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
     GRASP_BACK = {"z": 0.05, "xy": 0.1}
@@ -53,12 +45,13 @@ class WrsMainController(object):
         self.instruction_list = []
         self.detection_list = []
 
-        # configファイルの受信
+        # configファイルの読み込み
         self.coordinates = self.load_json(self.get_path(["config", "coordinates.json"]))
         self.poses = self.load_json(self.get_path(["config", "poses.json"]))
         self.positionLabels = self.load_json(
             self.get_path(["config", "positionLabels.json"])
         )
+        self.ignoreList = self.load_json(self.get_path(["config", "ignoreList.json"]))
 
         # ROS通信関連の初期化
         tf_from_bbox_srv_name = "set_tf_from_bbox"
@@ -82,9 +75,10 @@ class WrsMainController(object):
         )
 
     @staticmethod
-    def get_path(pathes, package="wrs_algorithm"):
+    def get_path(pathes, package="wrs_algorithm") -> str:
         """
         ROSパッケージ名とファイルまでのパスを指定して、ファイルのパスを取得する
+        変更不要
         """
         if not pathes:  # check if the list is empty
             rospy.logerr("Can NOT resolve file path.")
@@ -94,9 +88,9 @@ class WrsMainController(object):
         return os.path.join(pkg_path, path)
 
     @staticmethod
-    def load_json(path):
+    def load_json(path) -> dict or list:
         """
-        jsonファイルを辞書型で読み込む
+        jsonファイルを辞書型またはlistで読み込む
         変更不要
         """
         with open(path, "r") as json_file:
@@ -228,7 +222,7 @@ class WrsMainController(object):
             info_str = "{:<15}({:.2%}, {:3d}, {:3d}, {:3d}, {:3d})\n".format(
                 obj.label, obj.score, obj.x, obj.y, obj.w, obj.h
             )
-            if obj.label in cls.IGNORE_LIST:
+            if obj.label in cls.ignoreList:
                 ignore_str += "- ignored  : " + info_str
             else:
                 score = cls.calc_score_bbox(obj)
