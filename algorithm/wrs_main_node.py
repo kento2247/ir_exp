@@ -75,7 +75,7 @@ class WrsMainController(object):
         )
 
     @staticmethod
-    def get_path(pathes, package="wrs_algorithm") -> str:
+    def get_path(pathes, package="wrs_algorithm"):
         """
         ROSパッケージ名とファイルまでのパスを指定して、ファイルのパスを取得する
         変更不要
@@ -88,7 +88,7 @@ class WrsMainController(object):
         return os.path.join(pkg_path, path)
 
     @staticmethod
-    def load_json(path) -> dict or list:
+    def load_json(path):
         """
         jsonファイルを辞書型またはlistで読み込む
         変更不要
