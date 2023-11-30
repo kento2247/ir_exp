@@ -404,7 +404,7 @@ class WrsMainController(object):
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
         # trofastの引き出しを引き出す
-        y_back_offset = self.coordinates["drawer_positions"]["back_offset"].y
+        y_back_offset = self.coordinates["drawer_positions"]["back_offset"]["y"]
         self.goto_pos([x, y + y_back_offset, -90])  # go to ahead
         # self.goto_name("stair_like_drawer")  #goto_nameだとうまくいかない。pos
         self.change_pose("grasp_on_table")
@@ -502,6 +502,7 @@ class WrsMainController(object):
         pos_xc = pos_xb + interval
 
         # xa配列はcurrent_stpに関係している
+        # 必ず列インデックス番号がcurrent_stpに対応する座標を返すようにする
         waypoints = {
             "xa": [[pos_xa, 2.5, 45], [pos_xa, 2.9, 45], [pos_xa, 3.3, 90]],
             "xb": [[pos_xb, 2.5, 90], [pos_xb, 2.9, 90], [pos_xb, 3.3, 90]],
@@ -559,10 +560,10 @@ class WrsMainController(object):
         bottom_pos = drawer_positions["drawer_bottom"]
         left_pos = drawer_positions["drawer_left"]
         self.pull_out_trofast(
-            bottom_pos.x, bottom_pos.y, bottom_pos.z, -90, 100, 0
+            bottom_pos["x"], bottom_pos["y"], bottom_pos["z"], -90, 100, 0
         )  # drawer right(top and bottom)
         self.pull_out_trofast(
-            left_pos.x, left_pos.y, left_pos.z, -90, 100, 0
+            left_pos["x"], left_pos["y"], left_pos["z"], -90, 100, 0
         )  # drawer left
 
     def execute_task1(self):
