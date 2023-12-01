@@ -13,7 +13,8 @@ import traceback
 from select import select
 from turtle import pos
 
-import find_waypoints
+
+from find_waypoints  import PathPlanning
 import putIn_positionLabel as PLM
 import rospkg
 import rospy
@@ -548,7 +549,8 @@ class WrsMainController(object):
 
     def execute_avoid_blocks(self):
         # Avoid Obstacles
-        waypoints = find_waypoints.get_waypoints()
+        path_planning_instance = PathPlanning(obstacle_coordinates)
+        waypoints = path_planning_instance.get_waypoints()
         print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)
@@ -740,8 +742,8 @@ class WrsMainController(object):
         """
         self.goto_initial_place()
         # self.open_drawer()
-        # self.execute_task1()
-        self.execute_task2a()
+        self.execute_task1()
+        # self.execute_task2a()
         # self.execute_task2b()
 
 
