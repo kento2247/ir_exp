@@ -269,7 +269,18 @@ class WrsMainController(object):
         xy_diff = abs(320 - gravity_x) / 320 + abs(360 - gravity_y) / 240
 
         return 1 / xy_diff
-
+    @classmethod
+    def get_second_best_graspable_bboxes_by_label(cls, obj_list, label):
+        """
+        Return the Bbox of the Second Most Graspable Object from Ones that Matches the label Name
+        Filter the obj_list with the label name and run get_most_graspable_bbox()
+        """
+        match_objs = [obj for obj in obj_list if obj.label in label]
+        if len(match_objs) < 2:
+            rospy.logwarn("Cannot find enough objects which labeled with similar name.")
+            return None
+        sorted_objs = sorted(match_objs, key=lambda x: x.score, reverse=True)
+        return sorted_objs[1].bbox
     @classmethod
     def get_most_graspable_bboxes_by_label(cls, obj_list, label):
         """
@@ -350,6 +361,21 @@ class WrsMainController(object):
             pitch,
             roll,
         )
+
+    def grasp_tuna_side(self, grasp_pos):
+        """
+        正面把持を行う
+        ややアームを下に向けている
+        微調整必要かも
+        """
+        grasp_pos.y -= self.HAND_PALM_OFFSET
+        rospy.loginfo(
+            "grasp_from_front_side (%.2f, %.2f, %.2f)",
+            grasp_pos.x,
+            grasp_pos.y,
+            grasp_pos.z,
+        )
+        self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -120, 0, "-y")
 
     def grasp_from_front_side(self, grasp_pos):
         """
@@ -471,9 +497,12 @@ class WrsMainController(object):
         rospy.loginfo("target_obj: " + target_obj + "  target_person: " + target_person)
         # Decides which bbox to grasp from the object detection result
         detected_objs = self.get_latest_detection()
-        grasp_bbox = self.get_most_graspable_bboxes_by_label(
+        # grasp_bbox = self.get_most_graspable_bboxes_by_label(
+        #     detected_objs.bboxes, target_obj
+        # )
+        grasp_bbox = self.get_second_best_graspable_bboxes_by_label(
             detected_objs.bboxes, target_obj
-        )
+        )      
         if grasp_bbox is None:
             rospy.logwarn("Cannot find object to grasp. task2b is aborted.")
             return
