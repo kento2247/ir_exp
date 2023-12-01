@@ -1,0 +1,1 @@
+/workspace/py2_ws/devel/.private/detector_msgs/share/roseus/ros/detector_msgs/msg/BBox.l

@@ -1,0 +1,1 @@
+/workspace/py3_ws/devel/.private/detector_msgs/share/detector_msgs/cmake/detector_msgs-msg-extras.cmake

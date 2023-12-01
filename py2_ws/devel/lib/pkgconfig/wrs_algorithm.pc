@@ -1,0 +1,1 @@
+/workspace/py2_ws/devel/.private/wrs_algorithm/lib/pkgconfig/wrs_algorithm.pc

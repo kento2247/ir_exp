@@ -1,0 +1,7 @@
+Symlinking /workspace/py3_ws/devel/lib/libtf2_ros.so
+Symlinking /workspace/py3_ws/devel/lib/pkgconfig/tf2_ros.pc
+Symlinking /workspace/py3_ws/devel/lib/tf2_ros/buffer_server
+Symlinking /workspace/py3_ws/devel/lib/tf2_ros/static_transform_publisher
+Symlinking /workspace/py3_ws/devel/lib/python3/dist-packages/tf2_ros/__init__.py
+Symlinking /workspace/py3_ws/devel/share/tf2_ros/cmake/tf2_rosConfig-version.cmake
+Symlinking /workspace/py3_ws/devel/share/tf2_ros/cmake/tf2_rosConfig.cmake

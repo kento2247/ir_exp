@@ -39,14 +39,6 @@ class WrsMainController(object):
     HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.3
-    ignoreList = [
-        "small_marker",
-        "large_marker",
-        "lego_duplo",
-        "spatula",
-        "nine_hole_peg_test",
-        "plum",
-    ]
 
     def __init__(self):
         # 変数の初期化
@@ -59,6 +51,7 @@ class WrsMainController(object):
         self.positionLabels = self.load_json(
             self.get_path(["config", "positionLabels.json"])
         )
+        self.ignoreList = self.load_json(self.get_path(["config", "ignoreList.json"]))
 
         # ROS通信関連の初期化
         tf_from_bbox_srv_name = "set_tf_from_bbox"
