@@ -213,6 +213,7 @@ def get_waypoints(obstacle_coordinates):
     return return_list
 
 
+"""
 def test():
     obstacle_coordinates = [
         {"x": 2.56485074506, "y": 2.43516755659, "z": 0.040733772599},
@@ -249,3 +250,4 @@ def test():
 
 
 test()
+"""
