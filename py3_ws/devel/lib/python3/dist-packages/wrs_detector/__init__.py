@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/wrs_detector/lib/python3/dist-packages/wrs_detector/__init__.py

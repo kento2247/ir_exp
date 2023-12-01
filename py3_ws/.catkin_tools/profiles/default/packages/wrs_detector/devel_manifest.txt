@@ -1,6 +1,0 @@
-wrs_detector
-/workspace/py3_ws/devel/.private/wrs_detector/cmake.lock /workspace/py3_ws/devel/./cmake.lock
-/workspace/py3_ws/devel/.private/wrs_detector/lib/pkgconfig/wrs_detector.pc /workspace/py3_ws/devel/lib/pkgconfig/wrs_detector.pc
-/workspace/py3_ws/devel/.private/wrs_detector/lib/python3/dist-packages/wrs_detector/__init__.py /workspace/py3_ws/devel/lib/python3/dist-packages/wrs_detector/__init__.py
-/workspace/py3_ws/devel/.private/wrs_detector/share/wrs_detector/cmake/wrs_detectorConfig.cmake /workspace/py3_ws/devel/share/wrs_detector/cmake/wrs_detectorConfig.cmake
-/workspace/py3_ws/devel/.private/wrs_detector/share/wrs_detector/cmake/wrs_detectorConfig-version.cmake /workspace/py3_ws/devel/share/wrs_detector/cmake/wrs_detectorConfig-version.cmake

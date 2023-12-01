@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/hsr_perception/share/hsr_perception/cmake/hsr_perceptionConfig-version.cmake

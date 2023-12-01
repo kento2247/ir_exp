@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/test_tf2/lib/pkgconfig/test_tf2.pc

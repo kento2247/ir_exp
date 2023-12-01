@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/detector_msgs/share/common-lisp/ros/detector_msgs/msg/_package_BBox.lisp

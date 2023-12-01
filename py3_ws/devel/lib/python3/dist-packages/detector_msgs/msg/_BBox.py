@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/detector_msgs/lib/python3/dist-packages/detector_msgs/msg/_BBox.py

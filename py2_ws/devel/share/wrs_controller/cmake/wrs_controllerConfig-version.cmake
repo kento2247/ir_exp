@@ -1,1 +1,0 @@
-/workspace/py2_ws/devel/.private/wrs_controller/share/wrs_controller/cmake/wrs_controllerConfig-version.cmake

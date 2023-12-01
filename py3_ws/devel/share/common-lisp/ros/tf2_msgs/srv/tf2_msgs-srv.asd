@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/tf2_msgs/share/common-lisp/ros/tf2_msgs/srv/tf2_msgs-srv.asd

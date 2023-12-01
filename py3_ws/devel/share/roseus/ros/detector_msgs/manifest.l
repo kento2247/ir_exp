@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/detector_msgs/share/roseus/ros/detector_msgs/manifest.l

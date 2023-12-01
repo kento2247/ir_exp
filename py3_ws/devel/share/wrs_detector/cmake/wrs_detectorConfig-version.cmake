@@ -1,1 +1,0 @@
-/workspace/py3_ws/devel/.private/wrs_detector/share/wrs_detector/cmake/wrs_detectorConfig-version.cmake
