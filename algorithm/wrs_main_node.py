@@ -591,6 +591,7 @@ class WrsMainController(object):
         """
         rospy.loginfo("#### start Task 1 ####")
         hsr_position = [  # Locations for robot to go around, and its poses
+            ("initial_place", "look_at_near_floor"),
             ("tall_table", "look_at_tall_table"),
             ("near_long_table_l", "look_at_near_floor"),
             ("long_table_r", "look_at_long_table"),
