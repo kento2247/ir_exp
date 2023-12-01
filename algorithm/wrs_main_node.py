@@ -435,7 +435,7 @@ class WrsMainController(object):
             return False
         
         if grasp_method == "above":
-            method = self.grasp_from_upper_side
+            method = self.grasp_from_left_side
         elif grasp_method == "front":
             method = self.grasp_from_front_side
         else:
