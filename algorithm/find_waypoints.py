@@ -190,6 +190,7 @@ class PathPlanning:
 
 
 def get_waypoints(obstacle_coordinates):
+    print(obstacle_coordinates)
     if obstacle_coordinates is None:
         return None
     # obstacle_coordinates = [
