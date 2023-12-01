@@ -496,11 +496,11 @@ class WrsMainController(object):
         # Avoid Obstacles
         for i in range(3):
             detected_objs = self.get_latest_detection()
-            print("detected_objs: ", detected_objs)
             bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
-            print("bboxes: ", bboxes)
             # bboxes=[{x:n,y:n,w:n,h:n,label:n,score:n}]かな？
             pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
+            print("detected_objs: ", detected_objs)
+            print("bboxes: ", bboxes)
             print("pos_bboxes: ", pos_bboxes)
             waypoint = self.select_next_waypoint(i, pos_bboxes)
             # TODO remove the commentout to check the message
