@@ -1,10 +1,12 @@
+import heapq
 from collections import deque
 
 import matplotlib.pyplot as plt
 
-import heapq
 
 class PathPlanning:
+    result_waypoints = []
+
     def __init__(self):
         # パラメータ設定
         self.mesh_begin = {"x": 2.0, "y": 1.8}
@@ -81,21 +83,28 @@ class PathPlanning:
 
     def plot_points_2d(self, waypoints):
         # waypoints をプロット
-        waypoint_coords = [
-            (point[1], point[0]) for row in waypoints for point in row if point[2] == 1
-        ]
-        waypoint_y, waypoint_x = zip(*waypoint_coords)
-        plt.scatter(
-            waypoint_y, waypoint_x, c="blue", marker="o", label="Waypoints"
-        )  # XとYを入れ替え
+        for i in range(self.x_time):
+            for j in range(self.y_time):
+                if waypoints[i][j][2] == 1:
+                    plt.scatter(
+                        j * self.mesh_resolution + self.mesh_begin["y"],
+                        i * self.mesh_resolution + self.mesh_begin["x"],
+                        c="blue",
+                        marker="o",
+                    )  # XとYを入れ替え
+                elif waypoints[i][j][2] == 4:
+                    plt.scatter(
+                        j * self.mesh_resolution + self.mesh_begin["y"],
+                        i * self.mesh_resolution + self.mesh_begin["x"],
+                        c="orange",
+                        marker="o",
+                    )  # XとYを入れ替え
 
         # obstacle_points をプロット
         obstacle_x, obstacle_y = zip(
             *[(point["x"], point["y"]) for point in self.obstacle_coordinates]
         )
-        plt.scatter(
-            obstacle_y, obstacle_x, c="red", marker="x", label="Obstacle Points"
-        )  # XとYを入れ替え
+        plt.scatter(obstacle_y, obstacle_x, c="red", marker="x")  # XとYを入れ替え
 
         # begin_point をプロット
         plt.scatter(
@@ -103,7 +112,6 @@ class PathPlanning:
             self.begin_point["x"],
             c="green",
             marker="s",
-            label="Begin Point",
         )  # XとYを入れ替え
 
         # end_point をプロット
@@ -112,7 +120,6 @@ class PathPlanning:
             self.end_point["x"],
             c="purple",
             marker="s",
-            label="End Point",
         )  # XとYを入れ替え
 
         plt.xlabel("Y")  # XとYを入れ替えたのでラベルも変更
@@ -120,18 +127,8 @@ class PathPlanning:
 
         plt.gca().invert_yaxis()  # X軸を反転させる
 
-        plt.legend()
         plt.grid(True)
         plt.show()
-
-        # 移動が妥当かどうかを判断するロジック
-        x1, y1 = current
-        x2, y2 = neighbor
-        return (
-            0 <= x2 < self.x_time
-            and 0 <= y2 < self.y_time
-            and waypoints[x2][y2][2] == 1
-        )
 
     def find_path(self, waypoints, old_x, old_y, move_x, move_y):
         x = old_x + move_x
@@ -154,16 +151,19 @@ class PathPlanning:
             else:
                 waypoints[x][y][2] = 0
                 return waypoints
+
     def reconstruct_path(self, came_from, start, goal, waypoints):
         current = goal
         start_value = waypoints[start[0]][start[1]][2]
         goal_value = waypoints[goal[0]][goal[1]][2]
         while current != start:
             waypoints[current[0]][current[1]][2] = 4
+            self.result_waypoints.append(waypoints[current[0]][current[1]])
             current = came_from[current]
         waypoints[start[0]][start[1]][2] = start_value
         waypoints[goal[0]][goal[1]][2] = goal_value
         return waypoints
+
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
@@ -183,7 +183,11 @@ class PathPlanning:
 
             for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 next = (current[0] + dx, current[1] + dy)
-                if 0 <= next[0] < self.x_time and 0 <= next[1] < self.y_time and waypoints[next[0]][next[1]][2] != 0:
+                if (
+                    0 <= next[0] < self.x_time
+                    and 0 <= next[1] < self.y_time
+                    and waypoints[next[0]][next[1]][2] != 0
+                ):
                     new_cost = cost_so_far[current] + 1
                     if next not in cost_so_far or new_cost < cost_so_far[next]:
                         cost_so_far[next] = new_cost
@@ -192,29 +196,31 @@ class PathPlanning:
                         came_from[next] = current
 
         return came_from, cost_so_far
-# クラスのインスタンス化
-path_planning = PathPlanning()
-
-# waypoints 取得
-filtered_waypoints = path_planning.get_waypoints()
-begin_x = path_planning.begin_index["x"]
-begin_y = path_planning.begin_index["y"]
-# filtered_waypoints = path_planning.find_path(
-#     filtered_waypoints, begin_x, begin_y, -1, 0
-# )
-begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
-end = (path_planning.end_index["x"], path_planning.end_index["y"])
-
-# A* search
-came_from, cost_so_far = path_planning.a_star_search(filtered_waypoints, begin, end)
-# 経路の再構築
-filtered_waypoints = path_planning.reconstruct_path(came_from, begin, end, filtered_waypoints)
-
-for i in range(path_planning.x_time):
-    for j in range(path_planning.y_time):
-        print(filtered_waypoints[i][j][2], end=" ")
-    print()
 
 
-# 描画
-path_planning.plot_points_2d(filtered_waypoints)
+def get_waypoints():
+    # クラスのインスタンス化
+    path_planning = PathPlanning()
+
+    # waypoints 取得
+    filtered_waypoints = path_planning.get_waypoints()
+    begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
+    end = (path_planning.end_index["x"], path_planning.end_index["y"])
+    # A* search
+    came_from, cost_so_far = path_planning.a_star_search(filtered_waypoints, begin, end)
+    # 経路の再構築
+    filtered_waypoints = path_planning.reconstruct_path(
+        came_from, begin, end, filtered_waypoints
+    )
+
+    for i in range(path_planning.x_time):
+        for j in range(path_planning.y_time):
+            print(filtered_waypoints[i][j][2], end=" ")
+        print()
+
+    # 描画
+    path_planning.plot_points_2d(filtered_waypoints)
+    return path_planning.result_waypoints
+
+
+get_waypoints()
