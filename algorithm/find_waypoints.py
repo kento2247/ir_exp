@@ -2,6 +2,7 @@ from collections import deque
 
 import matplotlib.pyplot as plt
 
+import heapq
 
 class PathPlanning:
     def __init__(self):
@@ -153,8 +154,44 @@ class PathPlanning:
             else:
                 waypoints[x][y][2] = 0
                 return waypoints
+    def reconstruct_path(self, came_from, start, goal, waypoints):
+        current = goal
+        start_value = waypoints[start[0]][start[1]][2]
+        goal_value = waypoints[goal[0]][goal[1]][2]
+        while current != start:
+            waypoints[current[0]][current[1]][2] = 4
+            current = came_from[current]
+        waypoints[start[0]][start[1]][2] = start_value
+        waypoints[goal[0]][goal[1]][2] = goal_value
+        return waypoints
+    def heuristic(self, a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
+    def a_star_search(self, waypoints, start, goal):
+        frontier = []
+        heapq.heappush(frontier, (0, start))
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
 
+        while frontier:
+            _, current = heapq.heappop(frontier)
+
+            if current == goal:
+                break
+
+            for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+                next = (current[0] + dx, current[1] + dy)
+                if 0 <= next[0] < self.x_time and 0 <= next[1] < self.y_time and waypoints[next[0]][next[1]][2] != 0:
+                    new_cost = cost_so_far[current] + 1
+                    if next not in cost_so_far or new_cost < cost_so_far[next]:
+                        cost_so_far[next] = new_cost
+                        priority = new_cost + self.heuristic(goal, next)
+                        heapq.heappush(frontier, (priority, next))
+                        came_from[next] = current
+
+        return came_from, cost_so_far
 # クラスのインスタンス化
 path_planning = PathPlanning()
 
@@ -162,9 +199,17 @@ path_planning = PathPlanning()
 filtered_waypoints = path_planning.get_waypoints()
 begin_x = path_planning.begin_index["x"]
 begin_y = path_planning.begin_index["y"]
-filtered_waypoints = path_planning.find_path(
-    filtered_waypoints, begin_x, begin_y, -1, 0
-)
+# filtered_waypoints = path_planning.find_path(
+#     filtered_waypoints, begin_x, begin_y, -1, 0
+# )
+begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
+end = (path_planning.end_index["x"], path_planning.end_index["y"])
+
+# A* search
+came_from, cost_so_far = path_planning.a_star_search(filtered_waypoints, begin, end)
+# 経路の再構築
+filtered_waypoints = path_planning.reconstruct_path(came_from, begin, end, filtered_waypoints)
+
 for i in range(path_planning.x_time):
     for j in range(path_planning.y_time):
         print(filtered_waypoints[i][j][2], end=" ")
@@ -172,4 +217,4 @@ for i in range(path_planning.x_time):
 
 
 # 描画
-# path_planning.plot_points_2d(filtered_waypoints)
+path_planning.plot_points_2d(filtered_waypoints)
