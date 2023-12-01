@@ -13,6 +13,7 @@ import traceback
 from select import select
 from turtle import pos
 
+import find_waypoints
 import putIn_positionLabel as PLM
 import rospkg
 import rospy
@@ -269,6 +270,7 @@ class WrsMainController(object):
         xy_diff = abs(320 - gravity_x) / 320 + abs(360 - gravity_y) / 240
 
         return 1 / xy_diff
+
     @classmethod
     def get_second_best_graspable_bboxes_by_label(cls, obj_list, label):
         """
@@ -281,6 +283,7 @@ class WrsMainController(object):
             return None
         sorted_objs = sorted(match_objs, key=lambda x: x.score, reverse=True)
         return sorted_objs[1].bbox
+
     @classmethod
     def get_most_graspable_bboxes_by_label(cls, obj_list, label):
         """
@@ -502,7 +505,7 @@ class WrsMainController(object):
         # )
         grasp_bbox = self.get_second_best_graspable_bboxes_by_label(
             detected_objs.bboxes, target_obj
-        )      
+        )
         if grasp_bbox is None:
             rospy.logwarn("Cannot find object to grasp. task2b is aborted.")
             return
@@ -703,6 +706,8 @@ class WrsMainController(object):
         """
         Execue All Tasks
         """
+        find_waypoints.get_waypoints()
+        return
         self.goto_initial_place()
         self.open_drawer()
         self.execute_task1()

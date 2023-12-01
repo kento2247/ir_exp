@@ -221,6 +221,3 @@ def get_waypoints():
     # 描画
     path_planning.plot_points_2d(filtered_waypoints)
     return path_planning.result_waypoints
-
-
-get_waypoints()
