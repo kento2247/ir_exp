@@ -675,8 +675,8 @@ class WrsMainController(object):
         """
         self.goto_initial_place()
 
-        # self.open_drawer()
-        # self.execute_task1()
+        self.open_drawer()
+        self.execute_task1()
         self.execute_task2a()
         self.execute_task2b()
 
