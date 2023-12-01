@@ -1,4 +1,5 @@
 import heapq
+import math
 from collections import deque
 
 import matplotlib.pyplot as plt
@@ -208,7 +209,12 @@ def get_waypoints(obstacle_coordinates):
     filtered_waypoints = path_planning.reconstruct_path(
         came_from, begin, end, filtered_waypoints
     )
-    return_list = (path_planning.result_waypoints)[::-1]
-    for i in return_list:
-        i[2] = 180
-    return return_list
+    for i, point in enumerate(path_planning.result_waypoints[::-1]):
+        if i < len(path_planning.result_waypoints) - 1:
+            next_point = path_planning.result_waypoints[::-1][i + 1]
+            angle = math.degrees(
+                math.atan2(next_point[0] - point[0], next_point[1] - point[1])
+            )
+            path_planning.result_waypoints[::-1][i][2] = angle
+
+    return path_planning.result_waypoints
