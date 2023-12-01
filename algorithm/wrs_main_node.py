@@ -4,8 +4,7 @@
 the main program to operate a robot in WRS environment 
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
 import math
@@ -18,9 +17,12 @@ import putIn_positionLabel as PLM
 import rospkg
 import rospy
 import tf2_ros
-from detector_msgs.srv import (GetObjectDetection, GetObjectDetectionRequest,
-                               SetTransformFromBBox,
-                               SetTransformFromBBoxRequest)
+from detector_msgs.srv import (
+    GetObjectDetection,
+    GetObjectDetectionRequest,
+    SetTransformFromBBox,
+    SetTransformFromBBoxRequest,
+)
 from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
@@ -370,7 +372,7 @@ class WrsMainController(object):
         Grasps the Object from the Y-axis
         Might Need Changes
         """
-        grasp_pos.z += self.HAND_PALM_Z_OFFSET
+        grasp_pos.z += self.HAND_PALM_OFFSET
         rospy.loginfo(
             "grasp_from_upper_side (%.2f, %.2f, %.2f)",
             grasp_pos.x,
