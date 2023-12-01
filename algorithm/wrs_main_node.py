@@ -420,8 +420,8 @@ class WrsMainController(object):
         self.change_pose("all_neutral")
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
-        #pull the trofast drawers
-        y_back_offset = self.coordinates["drawer_positions"]["back_offset"].y
+        # pull the trofast drawers
+        y_back_offset = self.coordinates["drawer_positions"]["back_offset"]["y"]
         self.goto_pos([x, y + y_back_offset, -90])  # go to pulling position
         # self.goto_name("stair_like_drawer")  #goto_nameだとうまくいかない。pos
         self.change_pose("grasp_on_table")
@@ -486,7 +486,7 @@ class WrsMainController(object):
 
         # Bring the object to the target_person
         self.change_pose("look_at_near_floor")
-        self.goto_name("person_b")  # TODO: The destination is fixed 
+        self.goto_name("person_b")  # TODO: The destination is fixed
         self.change_pose("deliver_to_human")
         rospy.sleep(10.0)
         gripper.command(1)
@@ -509,7 +509,7 @@ class WrsMainController(object):
 
     def select_next_waypoint(self, current_stp, pos_bboxes):
         """
-        Remove Objects that are Close to the Waypoints and Return the Optimal Waypoint. 
+        Remove Objects that are Close to the Waypoints and Return the Optimal Waypoint.
         xa, xb, xc are Defined in the Order that is Closer to the Origin (x coordinates).
         Using bboxes as deciding factors to decide its desination (default is 0.45 aoart).
         pos_bboxes are to have already been used get_grasp_coordinate().
@@ -527,7 +527,7 @@ class WrsMainController(object):
         }
 
         # posがxa,xb,xcのラインに近い場合は候補から削除
-        # pos that is close to xa, xb, xc line will be deleted from 
+        # pos that is close to xa, xb, xc line will be deleted from
         is_to_xa = True
         is_to_xb = True
         is_to_xc = True
@@ -613,7 +613,6 @@ class WrsMainController(object):
                         "Cannot determine object to grasp. Grasping is aborted."
                     )
                     break  # if there are no objects, escape the loop and move to the next location
-                
 
                 label = graspable_obj["label"]
                 grasp_bbox = graspable_obj["bbox"]
@@ -691,7 +690,7 @@ def main():
         ctrl = WrsMainController()
         rospy.loginfo("node initialized [%s]", rospy.get_name())
 
-        # Check the task execution mode 
+        # Check the task execution mode
         if rospy.get_param("~test_mode", default=False) is True:
             rospy.loginfo("#### start with TEST mode. ####")
         else:
