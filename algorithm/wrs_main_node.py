@@ -498,7 +498,7 @@ class WrsMainController(object):
         self.change_pose("look_at_shelf")
 
         rospy.loginfo("target_obj: " + target_obj + "  target_person: " + target_person)
-        if (target_obj == "master_chef_can"):
+        if target_obj == "master_chef_can":
             target_obj = "cracker_box"
         # Decides which bbox to grasp from the object detection result
         detected_objs = self.get_latest_detection()
@@ -517,9 +517,9 @@ class WrsMainController(object):
 
         # Bring the object to the target_person
         self.change_pose("look_at_near_floor")
-        if (target_person == "left"):
+        if target_person == "left":
             self.goto_name("person_a")
-        elif (target_person == "right"):
+        elif target_person == "right":
             self.goto_name("person_b")
         else:
             self.goto_name("person_a")
@@ -710,7 +710,7 @@ class WrsMainController(object):
         """
         Execue All Tasks
         """
-        find_waypoints.get_waypoints()
+        print(find_waypoints.get_waypoints())
         return
         self.goto_initial_place()
         self.open_drawer()
