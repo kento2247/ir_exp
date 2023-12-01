@@ -212,4 +212,4 @@ def get_waypoints():
     #     print()
 
     # path_planning.plot_points_2d(filtered_waypoints)
-    return path_planning.result_waypoints
+    return path_planning.result_waypoints.reverse()
