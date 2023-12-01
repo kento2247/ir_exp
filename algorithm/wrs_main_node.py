@@ -46,6 +46,14 @@ class WrsMainController(object):
     HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.3
+    ignoreList = [
+        "small_marker",
+        "large_marker",
+        "lego_duplo",
+        "spatula",
+        "nine_hole_peg_test",
+        "plum",
+    ]
 
     def __init__(self):
         # initialization of variables
@@ -229,7 +237,7 @@ class WrsMainController(object):
             info_str = "{:<15}({:.2%}, {:3d}, {:3d}, {:3d}, {:3d})\n".format(
                 obj.label, obj.score, obj.x, obj.y, obj.w, obj.h
             )
-            if obj.label in cls.IGNORE_LIST:
+            if obj.label in cls.ignoreList:
                 ignore_str += "- ignored  : " + info_str
             else:
                 score = cls.calc_score_bbox(obj)
@@ -489,8 +497,9 @@ class WrsMainController(object):
         for i in range(3):
             detected_objs = self.get_latest_detection()
             print("detected_objs: ", detected_objs)
-            bboxes = detected_objs.bboxes
+            bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
             print("bboxes: ", bboxes)
+            # bboxes=[{x:n,y:n,w:n,h:n,label:n,score:n}]かな？
             pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
             print("pos_bboxes: ", pos_bboxes)
             waypoint = self.select_next_waypoint(i, pos_bboxes)
@@ -569,11 +578,12 @@ class WrsMainController(object):
         bottom_pos = drawer_positions["drawer_bottom"]
         left_pos = drawer_positions["drawer_left"]
         self.pull_out_trofast(
-            bottom_pos.x, bottom_pos.y, bottom_pos.z, -90, 100, 0
-        )  # drawer right(top and bottom)
-        self.pull_out_trofast(
-            left_pos.x, left_pos.y, left_pos.z, -90, 100, 0
+            left_pos["x"], left_pos["y"], left_pos["z"], -90, 100, 0
         )  # drawer left
+        self.goto_initial_place()
+        self.pull_out_trofast(
+            bottom_pos["x"], bottom_pos["y"], bottom_pos["z"], -90, 100, 0
+        )  # drawer right(top and bottom)
 
     def execute_task1(self):
         """
@@ -623,10 +633,11 @@ class WrsMainController(object):
     def execute_task2a(self):
         """
         task2aを実行する
+        障害物を避けながらroom1からroom2へ移動する
         """
         rospy.loginfo("#### start Task 2a ####")
-        self.change_pose("look_at_near_floor")
-        gripper.command(0)
+        self.change_pose("look_at_near_floor")  # 下を見ないと物体検知できない
+        gripper.command(0)  # close the hand
         self.change_pose("look_at_near_floor")
         self.goto_name("standby_2a")
 
@@ -664,10 +675,11 @@ class WrsMainController(object):
         Execue All Tasks
         """
         self.goto_initial_place()
-        self.open_drawer()
-        self.execute_task1()
-        # self.execute_task2a()
-        # self.execute_task2b()
+
+        # self.open_drawer()
+        # self.execute_task1()
+        self.execute_task2a()
+        self.execute_task2b()
 
 
 def main():

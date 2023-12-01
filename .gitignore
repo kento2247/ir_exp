@@ -5,3 +5,4 @@ debug.*
 algorithm/debug*
 checker*
 .DS_store
+algorithm/__pycache__
