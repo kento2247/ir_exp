@@ -16,7 +16,7 @@ class PathPlanning:
             {"x": 2.98526708458, "y": 2.77542427319, "z": 0.0266928948159},
             {"x": 2.98471341612, "y": 2.77432731505, "z": 0.0278568250358},
         ]
-        self.obstacle_coordinates.append({"x": 2.1, "y": 2.1, "z": 0.0})  # 壁
+        self.obstacle_coordinates.append({"x": 2.1, "y": 2.1, "z": 0.0})
         self.colision_width = 0.15
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
