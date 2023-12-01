@@ -531,6 +531,7 @@ class WrsMainController(object):
     def execute_avoid_blocks(self):
         # Avoid Obstacles
         waypoints = find_waypoints.get_waypoints()
+        print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)
             self.goto_pos(i)
@@ -716,7 +717,6 @@ class WrsMainController(object):
         """
         Execue All Tasks
         """
-        print(find_waypoints.get_waypoints())
         self.goto_initial_place()
         # self.open_drawer()
         # self.execute_task1()
