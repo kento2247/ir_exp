@@ -8,7 +8,6 @@ class PathPlanning:
     result_waypoints = []
 
     def __init__(self):
-        # パラメータ設定
         self.mesh_begin = {"x": 2.0, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.1
@@ -26,7 +25,7 @@ class PathPlanning:
 
         self.x_length = abs(
             self.mesh_end["x"] - self.mesh_begin["x"] - self.colision_width * 1
-        )  # 上下は壁があるため、colision_widthを1回引く
+        )
         self.y_length = abs(self.mesh_end["y"] - self.mesh_begin["y"])
 
         self.x_time = int(self.x_length // self.mesh_resolution) + 2
@@ -82,7 +81,6 @@ class PathPlanning:
         return waypoints
 
     def plot_points_2d(self, waypoints):
-        # waypoints をプロット
         for i in range(self.x_time):
             for j in range(self.y_time):
                 if waypoints[i][j][2] == 1:
@@ -91,41 +89,38 @@ class PathPlanning:
                         i * self.mesh_resolution + self.mesh_begin["x"],
                         c="blue",
                         marker="o",
-                    )  # XとYを入れ替え
+                    )
                 elif waypoints[i][j][2] == 4:
                     plt.scatter(
                         j * self.mesh_resolution + self.mesh_begin["y"],
                         i * self.mesh_resolution + self.mesh_begin["x"],
                         c="orange",
                         marker="o",
-                    )  # XとYを入れ替え
+                    )
 
-        # obstacle_points をプロット
         obstacle_x, obstacle_y = zip(
             *[(point["x"], point["y"]) for point in self.obstacle_coordinates]
         )
-        plt.scatter(obstacle_y, obstacle_x, c="red", marker="x")  # XとYを入れ替え
+        plt.scatter(obstacle_y, obstacle_x, c="red", marker="x")
 
-        # begin_point をプロット
         plt.scatter(
             self.begin_point["y"],
             self.begin_point["x"],
             c="green",
             marker="s",
-        )  # XとYを入れ替え
+        )
 
-        # end_point をプロット
         plt.scatter(
             self.end_point["y"],
             self.end_point["x"],
             c="purple",
             marker="s",
-        )  # XとYを入れ替え
+        )
 
-        plt.xlabel("Y")  # XとYを入れ替えたのでラベルも変更
+        plt.xlabel("Y")
         plt.ylabel("X")
 
-        plt.gca().invert_yaxis()  # X軸を反転させる
+        plt.gca().invert_yaxis()
 
         plt.grid(True)
         plt.show()
@@ -199,16 +194,14 @@ class PathPlanning:
 
 
 def get_waypoints():
-    # クラスのインスタンス化
     path_planning = PathPlanning()
 
-    # waypoints 取得
     filtered_waypoints = path_planning.get_waypoints()
     begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
     end = (path_planning.end_index["x"], path_planning.end_index["y"])
-    # A* search
+
     came_from, cost_so_far = path_planning.a_star_search(filtered_waypoints, begin, end)
-    # 経路の再構築
+
     filtered_waypoints = path_planning.reconstruct_path(
         came_from, begin, end, filtered_waypoints
     )
@@ -218,6 +211,5 @@ def get_waypoints():
             print(filtered_waypoints[i][j][2], end=" ")
         print()
 
-    # 描画
     path_planning.plot_points_2d(filtered_waypoints)
     return path_planning.result_waypoints
