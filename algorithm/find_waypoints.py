@@ -192,11 +192,6 @@ def get_waypoints(obstacle_coordinates):
     print(obstacle_coordinates)
     if obstacle_coordinates is None:
         return None
-    # obstacle_coordinates = [
-    #     {"x": 2.56485074506, "y": 2.43516755659, "z": 0.040733772599},
-    #     {"x": 2.98526708458, "y": 2.77542427319, "z": 0.0266928948159},
-    #     {"x": 2.98471341612, "y": 2.77432731505, "z": 0.0278568250358},
-    # ]
     obstacle_list = [{"x": 2.0, "y": 2.1, "z": 0.0}]
     for i in obstacle_coordinates:
         print(i)
@@ -212,19 +207,13 @@ def get_waypoints(obstacle_coordinates):
     filtered_waypoints = path_planning.reconstruct_path(
         came_from, begin, end, filtered_waypoints
     )
-
-    # for i in range(path_planning.x_time):
-    #     for j in range(path_planning.y_time):
-    #         print(filtered_waypoints[i][j][2], end=",")
-    #     print()
-
-    # path_planning.plot_points_2d(filtered_waypoints)
     return_list = (path_planning.result_waypoints)[::-1]
     for i in return_list:
         i[2] = 180
     return return_list
 
 
+"""
 def test():
     obstacle_coordinates = [
         {"x": 2.56485074506, "y": 2.43516755659, "z": 0.040733772599},
@@ -258,6 +247,6 @@ def test():
         i[2] = 180
     print(return_list)
     return return_list
-
+"""
 
 # test()
