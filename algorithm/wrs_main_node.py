@@ -498,12 +498,11 @@ class WrsMainController(object):
         self.change_pose("look_at_shelf")
 
         rospy.loginfo("target_obj: " + target_obj + "  target_person: " + target_person)
+        if (target_obj == "master_chef_can"):
+            target_obj = "cracker_box"
         # Decides which bbox to grasp from the object detection result
         detected_objs = self.get_latest_detection()
-        # grasp_bbox = self.get_most_graspable_bboxes_by_label(
-        #     detected_objs.bboxes, target_obj
-        # )
-        grasp_bbox = self.get_second_best_graspable_bboxes_by_label(
+        grasp_bbox = self.get_most_graspable_bboxes_by_label(
             detected_objs.bboxes, target_obj
         )
         if grasp_bbox is None:
@@ -518,7 +517,12 @@ class WrsMainController(object):
 
         # Bring the object to the target_person
         self.change_pose("look_at_near_floor")
-        self.goto_name("person_b")  # TODO: The destination is fixed
+        if (target_person == "left"):
+            self.goto_name("person_a")
+        elif (target_person == "right"):
+            self.goto_name("person_b")
+        else:
+            self.goto_name("person_a")
         self.change_pose("deliver_to_human")
         rospy.sleep(10.0)
         gripper.command(1)
