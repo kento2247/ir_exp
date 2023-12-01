@@ -560,11 +560,11 @@ class WrsMainController(object):
         bottom_pos = drawer_positions["drawer_bottom"]
         left_pos = drawer_positions["drawer_left"]
         self.pull_out_trofast(
-            bottom_pos["x"], bottom_pos["y"], bottom_pos["z"], -90, 100, 0
-        )  # drawer right(top and bottom)
-        self.pull_out_trofast(
             left_pos["x"], left_pos["y"], left_pos["z"], -90, 100, 0
         )  # drawer left
+        self.pull_out_trofast(
+            bottom_pos["x"], bottom_pos["y"], bottom_pos["z"], -90, 100, 0
+        )  # drawer right(top and bottom)
 
     def execute_task1(self):
         """
@@ -655,10 +655,11 @@ class WrsMainController(object):
         全てのタスクを実行する
         """
         self.goto_initial_place()
-        self.open_drawer()
-        self.execute_task1()
-        # self.execute_task2a()
-        # self.execute_task2b()
+
+        # self.open_drawer()
+        # self.execute_task1()
+        self.execute_task2a()
+        self.execute_task2b()
 
 
 def main():
