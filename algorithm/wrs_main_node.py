@@ -4,7 +4,8 @@
 the main program to operate a robot in WRS environment 
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import json
 import math
@@ -17,12 +18,9 @@ import putIn_positionLabel as PLM
 import rospkg
 import rospy
 import tf2_ros
-from detector_msgs.srv import (
-    GetObjectDetection,
-    GetObjectDetectionRequest,
-    SetTransformFromBBox,
-    SetTransformFromBBoxRequest,
-)
+from detector_msgs.srv import (GetObjectDetection, GetObjectDetectionRequest,
+                               SetTransformFromBBox,
+                               SetTransformFromBBoxRequest)
 from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
@@ -675,8 +673,8 @@ class WrsMainController(object):
         """
         self.goto_initial_place()
 
-        self.open_drawer()
-        self.execute_task1()
+        # self.open_drawer()
+        # self.execute_task1()
         self.execute_task2a()
         self.execute_task2b()
 
