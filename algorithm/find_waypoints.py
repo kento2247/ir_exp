@@ -12,6 +12,8 @@ class PathPlanning:
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.1
         self.obstacle_coordinates = obstacle_coordinates
+        self.obstacle_coordinates.append({"x": 2.0, "y": 2.1, "z": 0.0})
+        self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
         self.colision_width = 0.15
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
@@ -191,7 +193,7 @@ class PathPlanning:
 def get_waypoints(obstacle_coordinates):
     if obstacle_coordinates is None:
         return None
-    obstacle_list = [{"x": 2.0, "y": 2.1, "z": 0.0}, {"x": 2.3, "y": 2.1, "z": 0.0}]
+    obstacle_list = []
     for i in obstacle_coordinates:
         print(i)
         obstacle_list.append({"x": i.x, "y": i.y, "z": 0.0})
@@ -210,43 +212,3 @@ def get_waypoints(obstacle_coordinates):
     for i in return_list:
         i[2] = 180
     return return_list
-
-
-"""
-def test():
-    obstacle_coordinates = [
-        {"x": 2.56485074506, "y": 2.43516755659, "z": 0.040733772599},
-        {"x": 2.98526708458, "y": 2.77542427319, "z": 0.0266928948159},
-        {"x": 2.98471341612, "y": 2.77432731505, "z": 0.0278568250358},
-    ]
-    obstacle_list = [{"x": 2.3, "y": 2.1, "z": 0.0}, {"x": 2.0, "y": 2.1, "z": 0.0}]
-    for i in obstacle_coordinates:
-        obstacle_list.append(i)
-    path_planning = PathPlanning(obstacle_list)
-
-    filtered_waypoints = path_planning.get_waypoints()
-    begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
-    end = (path_planning.end_index["x"], path_planning.end_index["y"])
-
-    came_from, cost_so_far = path_planning.a_star_search(filtered_waypoints, begin, end)
-
-    filtered_waypoints = path_planning.reconstruct_path(
-        came_from, begin, end, filtered_waypoints
-    )
-
-    for i in range(path_planning.x_time):
-        for j in range(path_planning.y_time):
-            print(filtered_waypoints[i][j][2], end=",")
-        print()
-
-    path_planning.plot_points_2d(filtered_waypoints)
-
-    return_list = (path_planning.result_waypoints)[::-1]
-    for i in return_list:
-        i[2] = 180
-    print(return_list)
-    return return_list
-
-
-test()
-"""
