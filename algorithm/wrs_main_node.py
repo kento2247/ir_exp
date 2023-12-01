@@ -409,8 +409,18 @@ class WrsMainController(object):
             grasp_pos.z,
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -160, 0, "-y")
+    
+    def grasp_from_left_side(self, grasp_pos):
+        grasp_pos.x += self.HAND_PALM_OFFSET
+        rospy.loginfo(
+            "grasp_from_left_side (%.2f, %.2f, %.2f)",
+            grasp_pos.x,
+            grasp_pos.y,
+            grasp_pos.z,
+        )
+        self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, 0, -100, 0, "-x")
 
-    def exec_graspable_method(self, grasp_pos, label=""):
+    def exec_graspable_method(self, grasp_pos, grasp_method, label=""):
         """
         task1: Decides the Grasping Motion from the positions
         Might Need Changes
@@ -423,16 +433,24 @@ class WrsMainController(object):
         # No Grasping Conditions
         if graspable_y < grasp_pos.y and desk_z > grasp_pos.z:
             return False
-
-        if label in ["cup", "frisbee", "bowl"]:
-            # Avoiding Bowl Sticking to the Arm
+        
+        if grasp_method == "above":
             method = self.grasp_from_upper_side
+        elif grasp_method == "front":
+            method = self.grasp_from_front_side
         else:
-            if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
-                # If the object is under the desk
-                method = self.grasp_from_front_side
-            else:
-                method = self.grasp_from_upper_side
+            #not implemented yet
+            method = self.grasp_from_left_side
+
+        # if label in ["cup", "frisbee", "bowl"]:
+        #     # Avoiding Bowl Sticking to the Arm
+        #     method = self.grasp_from_upper_side
+        # else:
+        #     if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
+        #         # If the object is under the desk
+        #         method = self.grasp_from_front_side
+        #     else:
+        #         method = self.grasp_from_upper_side
 
         method(grasp_pos)
         return True
@@ -530,13 +548,7 @@ class WrsMainController(object):
 
     def execute_avoid_blocks(self):
         # Avoid Obstacles
-        detected_objs = self.get_latest_detection()
-        bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
-        pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
-        # print("detected_objs: ", detected_objs)
-        # print("bboxes: ", bboxes)
-        # print("pos_bboxes: ", pos_bboxes)
-        waypoints = find_waypoints.get_waypoints(pos_bboxes)
+        waypoints = find_waypoints.get_waypoints()
         print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)
@@ -668,15 +680,18 @@ class WrsMainController(object):
                 grasp_bbox = graspable_obj["bbox"]
                 rospy.loginfo("grasp the " + label)
 
-                # If there exists any graspable objects, execute the grasping funciton
-                grasp_pos = self.get_grasp_coordinate(grasp_bbox)
-                self.change_pose("grasp_on_table")
-                self.exec_graspable_method(grasp_pos, label)
-                self.change_pose("all_neutral")
-
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
                 place = place_obj["place"]
                 deposit = place_obj["deposit"]
+                grasp_method = place_obj["grasp"]
+
+                # If there exists any graspable objects, execute the grasping funciton
+                grasp_pos = self.get_grasp_coordinate(grasp_bbox)
+                self.change_pose("grasp_on_table")
+                self.exec_graspable_method(grasp_pos, grasp_method, label)
+                self.change_pose("all_neutral")
+
+ 
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
