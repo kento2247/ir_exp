@@ -206,10 +206,10 @@ def get_waypoints():
         came_from, begin, end, filtered_waypoints
     )
 
-    for i in range(path_planning.x_time):
-        for j in range(path_planning.y_time):
-            print(filtered_waypoints[i][j][2], end=",")
-        print()
+    # for i in range(path_planning.x_time):
+    #     for j in range(path_planning.y_time):
+    #         print(filtered_waypoints[i][j][2], end=",")
+    #     print()
 
-    path_planning.plot_points_2d(filtered_waypoints)
+    # path_planning.plot_points_2d(filtered_waypoints)
     return path_planning.result_waypoints
