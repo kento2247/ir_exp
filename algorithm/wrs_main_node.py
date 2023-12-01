@@ -569,6 +569,7 @@ class WrsMainController(object):
         self.pull_out_trofast(
             left_pos["x"], left_pos["y"], left_pos["z"], -90, 100, 0
         )  # drawer left
+        self.goto_initial_place()
         self.pull_out_trofast(
             bottom_pos["x"], bottom_pos["y"], bottom_pos["z"], -90, 100, 0
         )  # drawer right(top and bottom)
