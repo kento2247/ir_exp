@@ -208,7 +208,7 @@ def get_waypoints():
 
     for i in range(path_planning.x_time):
         for j in range(path_planning.y_time):
-            print(filtered_waypoints[i][j][2], end=" ")
+            print(filtered_waypoints[i][j][2], end=",")
         print()
 
     path_planning.plot_points_2d(filtered_waypoints)
