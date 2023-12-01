@@ -11,7 +11,8 @@ class PathPlanning:
         self.mesh_begin = {"x": 2.0, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.1
-        self.obstacle_coordinates = obstacle_coordinates
+        for i in obstacle_coordinates:
+            self.obstacle_coordinates.append({"x": i.x, "y": i.y, "z": 0.0})
         self.obstacle_coordinates.append({"x": 2.1, "y": 2.1, "z": 0.0})
         self.colision_width = 0.15
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
