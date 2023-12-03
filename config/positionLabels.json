@@ -37,5 +37,7 @@
   "lego_duplo": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" },
   "magazine": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" },
   "black_t_shirt": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" },
-  "timer": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" }
+  "timer": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" },
+  "master_chef_can": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" },
+  "tuna_can": { "place": "Bin_A", "deposit": "Bin_A", "grasp": "above" }
 }

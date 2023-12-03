@@ -6,4 +6,5 @@ algorithm/debug*
 checker*
 .DS_store
 algorithm/__pycache__
-py2_ws/*
+py2_ws/**/*.pyc
+py3_ws/**/*.pyc
