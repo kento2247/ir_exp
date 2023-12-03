@@ -1,16 +1,15 @@
 #!/usr/bin/env python
+# pylint: disable=import-error
 # -*- coding: utf-8 -*-
 """
-the main program to operate a robot in WRS environment 
+the main program to operate a robot in WRS environment
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
-import math
 import os
 import traceback
-from select import select
 from turtle import pos
 
 
@@ -45,7 +44,8 @@ class WrsMainController(object):
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
     GRASP_BACK = {"z": 0.05, "xy": 0.1}
-    HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
+    # hand_palm_link is at the base of the hand so it needs an offset for grasping
+    HAND_PALM_OFFSET = 0.05
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.3
     ignoreList = [
@@ -143,9 +143,7 @@ class WrsMainController(object):
             tf2_ros.ConnectivityException,
             tf2_ros.ExtrapolationException,
         ):
-            log_str = "failed to get transform between [{}] and [{}]\n".format(
-                parent, child
-            )
+            log_str = f"failed to get transform between [{parent}] and [{child}]\n"
             log_str += traceback.format_exc()
             rospy.logerr(log_str)
             return None
@@ -236,15 +234,17 @@ class WrsMainController(object):
         extract_str = "detected object list\n"
         ignore_str = ""
         for obj in obj_list:
-            info_str = "{:<15}({:.2%}, {:3d}, {:3d}, {:3d}, {:3d})\n".format(
-                obj.label, obj.score, obj.x, obj.y, obj.w, obj.h
+            info_str = (
+                f"{obj.label:<15}"
+                f"({obj.score:.2%}, {obj.x:3d}, {obj.y:3d}, {obj.w:3d}, {obj.h:3d})\n"
             )
             if obj.label in cls.ignoreList:
-                ignore_str += "- ignored  : " + info_str
+                ignore_str += "- ignored  : " + \
+                            info_str
             else:
                 score = cls.calc_score_bbox(obj)
                 extracted.append({"bbox": obj, "score": score, "label": obj.label})
-                extract_str += "- extracted: {:07.3f} ".format(score) + info_str
+                extract_str += f"- extracted: {score:07.3f} " + info_str
 
         rospy.loginfo(extract_str + ignore_str)
 
@@ -252,8 +252,9 @@ class WrsMainController(object):
         #
         for obj_info in sorted(extracted, key=lambda x: x["score"], reverse=True):
             obj = obj_info["bbox"]
-            info_str = "{} ({:.2%}, {:3d}, {:3d}, {:3d}, {:3d})\n".format(
-                obj.label, obj.score, obj.x, obj.y, obj.w, obj.h
+            info_str = (
+                f"{obj.label:<15}"
+                f"({obj.score:.2%}, {obj.x:3d}, {obj.y:3d}, {obj.w:3d}, {obj.h:3d})\n"
             )
             rospy.loginfo("selected bbox: " + info_str)
             return obj_info
@@ -320,7 +321,7 @@ class WrsMainController(object):
         """
         if preliminary not in ["+y", "-y", "+x", "-x"]:
             raise RuntimeError(
-                "unnkown graps preliminary type [{}]".format(preliminary)
+                f"unknown graps preliminary type [{preliminary}]"
             )
 
         rospy.loginfo("move hand to grasp (%.2f, %.2f, %.2f)", pos_x, pos_y, pos_z)
@@ -410,8 +411,13 @@ class WrsMainController(object):
             grasp_pos.z,
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -160, 0, "-y")
-    
     def grasp_from_left_side(self, grasp_pos):
+        """
+        Grasp an object from the left side.
+
+        Args:
+            grasp_pos (object): The position of the object to grasp.
+        """
         grasp_pos.x += self.HAND_PALM_OFFSET
         rospy.loginfo(
             "grasp_from_left_side (%.2f, %.2f, %.2f)",
@@ -428,13 +434,12 @@ class WrsMainController(object):
         """
         method = None
         graspable_y = 1.85  # Can't Grasp Any Further
-        desk_y = 1.5
+        # desk_y = 1.5
         desk_z = 0.35
 
         # No Grasping Conditions
         if graspable_y < grasp_pos.y and desk_z > grasp_pos.z:
             return False
-        
         if grasp_method == "above":
             method = self.grasp_from_left_side
         elif grasp_method == "front":
@@ -457,6 +462,13 @@ class WrsMainController(object):
         return True
 
     def put_in_place(self, place, into_pose):
+        """
+        Put the object in a corresponding location and pose all_neutral
+
+        Args:
+            place (str): The specified location to place the object.
+            into_pose (str): The pose to transition into after placing the object.
+        """
         # 指定場所に入れ、all_neutral姿勢を取る
         # Put the object in a corresponding location and pose all_neutral
         self.change_pose("look_at_near_floor")
@@ -467,20 +479,49 @@ class WrsMainController(object):
         rospy.sleep(5.0)
         self.change_pose("all_neutral")
 
-    def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
+    def pull_out_trofast(self, x_coordinate, y_coordinate, z_coordinate,
+                        yaw_angle, pitch_angle, roll_angle):
+        """
+        Pulls out the trofast drawers to a specified position.
+
+        Args:
+            x_coordinate (float): The x-coordinate of the target position.
+            y_coordinate (float): The y-coordinate of the target position.
+            z_coordinate (float): The z-coordinate of the target position.
+            yaw_angle (float): The yaw angle for orientation.
+            pitch_angle (float): The pitch angle for orientation.
+            roll_angle (float): The roll angle for orientation.
+        """
         # pull the trofast drawers
         y_back_offset = self.coordinates["drawer_positions"]["back_offset"]["y"]
-        self.goto_pos([x, y + y_back_offset, -90])  # go to pulling position
+        self.goto_pos([x_coordinate, y_coordinate + y_back_offset, -90])  # go to pulling position
         # self.goto_name("stair_like_drawer")  #goto_nameだとうまくいかない。pos
         self.change_pose("grasp_on_table")
         gripper.command(1)
         whole_body.move_end_effector_pose(
-            x, y + self.TROFAST_Y_OFFSET, z, yaw, pitch, roll
+            x_coordinate,
+            y_coordinate + self.TROFAST_Y_OFFSET,
+            z_coordinate,
+            yaw_angle,
+            pitch_angle,
+            roll_angle
         )
-        whole_body.move_end_effector_pose(x, y, z, yaw, pitch, roll)
+        whole_body.move_end_effector_pose(
+            x_coordinate,
+            y_coordinate,
+            z_coordinate,
+            yaw_angle,
+            pitch_angle,
+            roll_angle
+        )
         gripper.command(0)
         whole_body.move_end_effector_pose(
-            x, y + self.TROFAST_Y_OFFSET, z, yaw, pitch, roll
+            x_coordinate,
+            y_coordinate,
+            z_coordinate,
+            yaw_angle,
+            pitch_angle,
+            roll_angle
         )
         gripper.command(1)
         self.change_pose("all_neutral")
@@ -548,6 +589,11 @@ class WrsMainController(object):
         self.change_pose("all_neutral")
 
     def execute_avoid_blocks(self):
+        """
+        This method is used to avoid obstacles by using the PathPlanning class.
+        It creates an instance of PathPlanning with obstacle coordinates and gets the waypoints.
+        The robot then moves to these waypoints.
+        """
         # Avoid Obstacles
         path_planning_instance = PathPlanning(obstacle_coordinates)
         waypoints = path_planning_instance.get_waypoints()
@@ -555,21 +601,17 @@ class WrsMainController(object):
         for i in waypoints:
             rospy.loginfo(i)
             self.goto_pos(i)
-        """
-        for i in range(3):
-            detected_objs = self.get_latest_detection()
-            bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
-            # bboxes=[{x:n,y:n,w:n,h:n,label:n,score:n}]かな？
-            pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
-            print("detected_objs: ", detected_objs)
-            print("bboxes: ", bboxes)
-            print("pos_bboxes: ", pos_bboxes)
-            waypoint = self.select_next_waypoint(i, pos_bboxes)
-            # TODO remove the commentout to check the message
-            rospy.loginfo(waypoint)
-            self.goto_pos(waypoint)
-        """
-
+        # for i in range(3):
+        #     detected_objs = self.get_latest_detection()
+        #     bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
+        #     # bboxes=[{x:n,y:n,w:n,h:n,label:n,score:n}]かな？
+        #     pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
+        #     print("detected_objs: ", detected_objs)
+        #     print("bboxes: ", bboxes)
+        #     print("pos_bboxes: ", pos_bboxes)
+        #     waypoint = self.select_next_waypoint(i, pos_bboxes)
+        #     rospy.loginfo(waypoint)
+        #     self.goto_pos(waypoint)
     def select_next_waypoint(self, current_stp, pos_bboxes):
         """
         Remove Objects that are Close to the Waypoints and Return the Optimal Waypoint.
@@ -596,7 +638,6 @@ class WrsMainController(object):
         is_to_xc = True
         for bbox in pos_bboxes:
             pos_x = bbox.x
-            # TODO デバッグ時にコメントアウトを外す
             # rospy.loginfo("detected object obj.x = {:.2f}".format(bbox.x))
 
             # NOTE Hint:ｙ座標次第で無視してよいオブジェクトもある。
@@ -604,11 +645,11 @@ class WrsMainController(object):
                 is_to_xa = False
                 # rospy.loginfo("is_to_xa=False")
                 continue
-            elif pos_x < pos_xb + (interval / 2):
+            if pos_x < pos_xb + (interval / 2):
                 is_to_xb = False
                 # rospy.loginfo("is_to_xb=False")
                 continue
-            elif pos_x < pos_xc + (interval / 2):
+            if pos_x < pos_xc + (interval / 2):
                 is_to_xc = False
                 # rospy.loginfo("is_to_xc=False")
                 continue
@@ -632,10 +673,16 @@ class WrsMainController(object):
         return x_line[current_stp]
 
     def goto_initial_place(self):
+        """
+        Go to the initial place and change the pose to all neutral.
+        """
         self.goto_name("initial_place")
         self.change_pose("all_neutral")
 
     def open_drawer(self):
+        """
+        Open the drawer using the coordinates provided in the 'drawer_positions' attribute.
+        """
         drawer_positions = self.coordinates["drawer_positions"]
         # top_pos = drawer_positions["drawer_top"] #top does not open
         bottom_pos = drawer_positions["drawer_bottom"]
@@ -683,7 +730,6 @@ class WrsMainController(object):
                 rospy.loginfo("grasp the " + label)
 
                 place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
-                place = place_obj["place"]
                 deposit = place_obj["deposit"]
                 grasp_method = place_obj["grasp"]
 
@@ -692,8 +738,6 @@ class WrsMainController(object):
                 self.change_pose("grasp_on_table")
                 self.exec_graspable_method(grasp_pos, grasp_method, label)
                 self.change_pose("all_neutral")
-
- 
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
