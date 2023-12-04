@@ -382,9 +382,8 @@ class WrsMainController(object):
 
     def grasp_from_front_side(self, grasp_pos):
         """
-        Grasping from the Front
-        The Arm is Tilting Downwards a Little
-        Might Need Changes
+        正面把持を行う
+        ややアームを下に向けている
         """
         grasp_pos.y -= self.HAND_PALM_OFFSET
         rospy.loginfo(
@@ -397,11 +396,10 @@ class WrsMainController(object):
 
     def grasp_from_upper_side(self, grasp_pos):
         """
-        Grasping from Uppserside
-        Grasps the Object from the Y-axis
-        Might Need Changes
+        上面から把持を行う
+        オブジェクトに寄るときは、y軸から近づく上面からは近づかない
         """
-        grasp_pos.z += self.HAND_PALM_OFFSET
+        grasp_pos.z += self.HAND_PALM_Z_OFFSET
         rospy.loginfo(
             "grasp_from_upper_side (%.2f, %.2f, %.2f)",
             grasp_pos.x,
@@ -409,6 +407,7 @@ class WrsMainController(object):
             grasp_pos.z,
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -160, 0, "-y")
+
 
     def grasp_from_left_side(self, grasp_pos):
         grasp_pos.x += self.HAND_PALM_OFFSET
@@ -420,34 +419,25 @@ class WrsMainController(object):
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, 0, -100, 0, "-x")
 
-    def exec_graspable_method(self, grasp_pos,label=""):
+    def exec_graspable_method(self, grasp_pos, label=""):
         """
-        task1: Decides the Grasping Motion from the positions
-        Might Need Changes
+        task1専用:posの位置によって把持方法を判定し実行する。
         """
         method = None
-        graspable_y = 1.85  # Can't Grasp Any Further
+        graspable_y = 1.85  # これ以上奥は把持できない
         desk_y = 1.5
         desk_z = 0.35
 
-        # No Grasping Conditions
+        # 把持禁止判定
         if graspable_y < grasp_pos.y and desk_z > grasp_pos.z:
             return False
 
-        # if grasp_method == "above":
-        #     method = self.grasp_from_left_side
-        # elif grasp_method == "front":
-        #     method = self.grasp_from_front_side
-        # else:
-        #     # not implemented yet
-        #     method = self.grasp_from_left_side
-
         if label in ["cup", "frisbee", "bowl"]:
-            # Avoiding Bowl Sticking to the Arm
+            # bowlの張り付き対策
             method = self.grasp_from_upper_side
         else:
             if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
-                # If the object is under the desk
+                # 机の下である場合
                 method = self.grasp_from_front_side
             else:
                 method = self.grasp_from_upper_side
