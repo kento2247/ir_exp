@@ -1,3 +1,7 @@
+"""
+今回こちらは時間が間に合わず実際の実装には利用していない関数です。しかし、物体の位置において動的に制御するようなコードとなっております。
+"""
+
 def exec_graspable_method(self, target_obj, detected_objs):
     """
     Module for handling grasping motions based on target object and surrounding objects.
@@ -18,9 +22,7 @@ def exec_graspable_method(self, target_obj, detected_objs):
         method = self.grasp_from_upper_side
     else:
         method = self.grasp_from_front_side
-
     return method
-
 def analyze_surroundings(self, target_obj, detected_objs):
     """
     Analyzes the surroundings of the target object to identify obstacles.
@@ -35,5 +37,4 @@ def analyze_surroundings(self, target_obj, detected_objs):
                 obstacles['right'] = True
             if obj.y > target_obj.y:  # Object is in front
                 obstacles['front'] = True
-
     return obstacles

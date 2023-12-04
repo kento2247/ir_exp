@@ -1,6 +1,9 @@
+"""
+このモジュールは、障害物の座標を考慮に入れた経路計画を行います。
+A*アルゴリズムを使用して最適な経路を見つけ、経路上の各点での角度を計算します。
+"""
 import heapq
 import math
-from collections import deque
 
 import matplotlib.pyplot as plt
 

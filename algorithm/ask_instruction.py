@@ -19,14 +19,15 @@ def ask_instruction(objects, instruction):
     """
     objects_formatted = ', '.join(objects)
     prompt = (
-        f"Analyze the given instruction and extract two pieces of information: "
-        f"'target_obj: [object], target_person: [direction]' "
-        f"1) The object to be delivered from the list of objects"
-        f"[{objects_formatted}], labeled as 'target_obj'. "
-        f"2) The direction of the person (either 'left' or 'right'), labeled as 'target_person'. "
-        f"Instruction: '{instruction}'. Then provide the response in this strict format: "
-        f"'target_obj: [object], target_person: [direction]'"
-    )
+            "Analyze the given instruction and extract two pieces of information: "
+            "'target_obj: [object], target_person: [direction]' "
+            "1) The object to be delivered from the list of objects"
+            "[{}], labeled as 'target_obj'. "
+            "2) The direction of the person (either 'left' or 'right'), "
+            "labeled as 'target_person'. "
+            "Instruction: '{}'. Then provide the response in this strict format: "
+            "'target_obj: [object], target_person: [direction]'"
+        ).format(objects_formatted, instruction)
 
     try:
         response = openai.ChatCompletion.create(
