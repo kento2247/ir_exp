@@ -15,7 +15,7 @@ class PathPlanning:
         self.obstacle_coordinates = obstacle_coordinates
         self.obstacle_coordinates.append({"x": 2.0, "y": 2.1, "z": 0.0})
         self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
-        self.colision_width = 0.19
+        self.colision_width = 0.15
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
         self.begin_index = {"x": 0, "y": 0}
@@ -91,13 +91,16 @@ class PathPlanning:
     def add_angle(self, waypoints):
         if waypoints is None:
             return None
-        for i, point in enumerate(waypoints):
-            if i < len(waypoints) - 1:
-                next_point = waypoints[i + 1]
-                angle = math.degrees(
-                    math.atan2(next_point[0] - point[0], next_point[1] - point[1])
-                )
-                waypoints[i][2] = float(angle)
+        # for i, point in enumerate(waypoints):
+        #     if i < len(waypoints) - 1:
+        #         next_point = waypoints[i + 1]
+        #         angle = math.degrees(
+        #             math.atan2(next_point[0] - point[0], next_point[1] - point[1])
+        #         )
+        #         waypoints[i][2] = float(angle)
+
+        for i in waypoints:
+            i[2] = float(90)
 
         return waypoints
 
