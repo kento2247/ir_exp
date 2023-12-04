@@ -15,6 +15,6 @@ def get_put_in_position_label(position_labels_dict, label):
             FOOD_LABELS_CALL_COUNT += 1
     else:
         print("position manager:\n  label: ", label, " is not found.")
-        target_position = {"place": "Bin_B", "deposit": "Bin_B", "grasp":"above"}
+        target_position = {"place": "Bin_B", "deposit": "Bin_B", "grasp": "above"}
     print("position manager:\n  target_position: ", target_position)
     return target_position
