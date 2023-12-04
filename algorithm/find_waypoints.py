@@ -9,7 +9,7 @@ class PathPlanning:
     result_waypoints = []
 
     def __init__(self, obstacle_coordinates):
-        self.mesh_begin = {"x": 1.8, "y": 1.8}
+        self.mesh_begin = {"x": 1.9, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.04
         self.obstacle_coordinates = obstacle_coordinates
