@@ -9,11 +9,11 @@ class PathPlanning:
     result_waypoints = []
 
     def __init__(self, obstacle_coordinates):
-        self.mesh_begin = {"x": 2.0, "y": 1.8}
+        self.mesh_begin = {"x": 1.8, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.04
         self.obstacle_coordinates = obstacle_coordinates
-        self.obstacle_coordinates.append({"x": 2.0, "y": 2.1, "z": 0.0})
+        self.obstacle_coordinates.append({"x": 1.8, "y": 2.1, "z": 0.0})
         # self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
         self.colision_width = 0.22
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
