@@ -33,16 +33,6 @@ class WrsMainController(object):
     this class executes tasks under WRS simulation
     """
 
-    IGNORE_LIST = [  # labels of omitted objects that asre hard to grasp
-        "small_marker",
-        "large_marker",
-        "lego_duplo",
-        "spatula",
-        "nine_hole_peg_test",
-        "plum",
-        "sugar_box",
-        "sponge",
-    ]
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
     GRASP_BACK = {"z": 0.05, "xy": 0.1}
@@ -411,7 +401,6 @@ class WrsMainController(object):
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -160, 0, "-y")
 
-
     def grasp_from_left_side(self, grasp_pos):
         grasp_pos.x += self.HAND_PALM_OFFSET
         rospy.loginfo(
@@ -686,7 +675,7 @@ class WrsMainController(object):
                 # If there exists any graspable objects, execute the grasping funciton
                 grasp_pos = self.get_grasp_coordinate(grasp_bbox)
                 self.change_pose("grasp_on_table")
-                self.exec_graspable_method(grasp_pos,label)
+                self.exec_graspable_method(grasp_pos, label)
                 self.change_pose("all_neutral")
 
                 self.put_in_place(deposit, "put_in_bin")
