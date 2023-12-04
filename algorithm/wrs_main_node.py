@@ -551,7 +551,11 @@ class WrsMainController(object):
         detected_objs = self.get_latest_detection()
         bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
         pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
-        waypoints = PathPlanning.get_waypoints(pos_bboxes)
+        obstacle_list = []
+        for i in pos_bboxes:
+            print(i)
+            obstacle_list.append({"x": i.x, "y": i.y, "z": 0.0})
+        waypoints = PathPlanning.get_waypoints(obstacle_list)
         print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)
