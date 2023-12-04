@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-the main program to operate a robot in WRS environment 
+the main program to operate a robot in WRS environment
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
-import math
 import os
 import traceback
-from select import select
 from turtle import pos
 
 import putIn_positionLabel as PLM
@@ -23,8 +21,8 @@ from detector_msgs.srv import (
     SetTransformFromBBox,
     SetTransformFromBBoxRequest,
 )
-from find_waypoints import PathPlanning
 from std_msgs.msg import String
+from find_waypoints import PathPlanning
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
 
@@ -36,7 +34,8 @@ class WrsMainController(object):
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
     GRASP_BACK = {"z": 0.05, "xy": 0.1}
-    HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
+    # hand_palm_link is at the base of the hand so it needs an offset for grasping
+    HAND_PALM_OFFSET = 0.05
     HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.36
@@ -59,10 +58,9 @@ class WrsMainController(object):
         # receiving of congifuration files
         self.coordinates = self.load_json(self.get_path(["config", "coordinates.json"]))
         self.poses = self.load_json(self.get_path(["config", "poses.json"]))
-        self.positionLabels = self.load_json(
+        self.position_labels = self.load_json(
             self.get_path(["config", "positionLabels.json"])
         )
-
         # Initialization of ROS communication related factors
         tf_from_bbox_srv_name = "set_tf_from_bbox"
         rospy.wait_for_service(tf_from_bbox_srv_name)
@@ -127,7 +125,6 @@ class WrsMainController(object):
         No Change Needed
         """
         try:
-            # Wait Four Seconds, if each tf exists, set the relativity info
             trans = self.tf_buffer.lookup_transform(
                 parent, child, rospy.Time.now(), rospy.Duration(2.0)
             )
@@ -136,12 +133,13 @@ class WrsMainController(object):
             tf2_ros.LookupException,
             tf2_ros.ConnectivityException,
             tf2_ros.ExtrapolationException,
-        ):
+        ) as error:
             log_str = "failed to get transform between [{}] and [{}]\n".format(
                 parent, child
             )
             log_str += traceback.format_exc()
             rospy.logerr(log_str)
+            rospy.logerr(error)
             return None
 
     def goto_name(self, name):
@@ -153,9 +151,8 @@ class WrsMainController(object):
             pos = self.coordinates["positions"][name]
             # rospy.loginfo("go to [%s](%.2f, %.2f, %.2f)", name, pos[0], pos[1], pos[2])
             return omni_base.go_abs(pos[0], pos[1], pos[2])
-        else:
-            rospy.logerr("unknown waypoint name [%s]", name)
-            return False
+        rospy.logerr("unknown waypoint name [%s]", name)
+        return False
 
     def goto_pos(self, pos):
         """
@@ -404,6 +401,12 @@ class WrsMainController(object):
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -160, 0, "-y")
 
     def grasp_from_left_side(self, grasp_pos):
+        """
+        Grasp an object from the left side.
+
+        Args:
+            grasp_pos (object): The position of the object to grasp.
+        """
         grasp_pos.x += self.HAND_PALM_OFFSET
         rospy.loginfo(
             "grasp_from_left_side (%.2f, %.2f, %.2f)",
@@ -583,10 +586,7 @@ class WrsMainController(object):
         is_to_xc = True
         for bbox in pos_bboxes:
             pos_x = bbox.x
-            # TODO デバッグ時にコメントアウトを外す
             # rospy.loginfo("detected object obj.x = {:.2f}".format(bbox.x))
-
-            # NOTE Hint:ｙ座標次第で無視してよいオブジェクトもある。
             if pos_x < pos_xa + (interval / 2):
                 is_to_xa = False
                 # rospy.loginfo("is_to_xa=False")
@@ -619,10 +619,16 @@ class WrsMainController(object):
         return x_line[current_stp]
 
     def goto_initial_place(self):
+        """
+        Go to the initial place and change the pose to all neutral.
+        """
         self.goto_name("initial_place")
         self.change_pose("all_neutral")
 
     def open_drawer(self):
+        """
+        Open the drawer using the coordinates provided in the 'drawer_positions' attribute.
+        """
         drawer_positions = self.coordinates["drawer_positions"]
         # top_pos = drawer_positions["drawer_top"] #top does not open
         bottom_pos = drawer_positions["drawer_bottom"]
@@ -669,11 +675,8 @@ class WrsMainController(object):
                 grasp_bbox = graspable_obj["bbox"]
                 rospy.loginfo("grasp the " + label)
 
-                place_obj = PLM.get_putIn_positionLabel(self.positionLabels, label)
-                place = place_obj["place"]
+                place_obj = PLM.get_putIn_positionLabel(self.position_labels, label)
                 deposit = place_obj["deposit"]
-                grasp_method = place_obj["grasp"]
-
                 # If there exists any graspable objects, execute the grasping funciton
                 grasp_pos = self.get_grasp_coordinate(grasp_bbox)
                 self.change_pose("grasp_on_table")

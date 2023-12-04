@@ -1,15 +1,18 @@
-food_labels_call_count = 0
+FOOD_LABELS_CALL_COUNT = 0
 
-def get_putIn_positionLabel(positionLabels_dict, label):
-    global food_labels_call_count
+def get_put_in_position_label(position_labels_dict, label):
+    """
+    get put in position label for struct
+    """
+    global FOOD_LABELS_CALL_COUNT
     target_position = {}
-    if label in positionLabels_dict:
-        target_position = positionLabels_dict[label]
+    if label in position_labels_dict:
+        target_position = position_labels_dict[label]
         if target_position["deposit"] == "":
             target_position["deposit"] = (
-                "Tray_A" if food_labels_call_count % 2 == 0 else "Tray_B"
+                "Tray_A" if FOOD_LABELS_CALL_COUNT % 2 == 0 else "Tray_B"
             )
-            food_labels_call_count += 1
+            FOOD_LABELS_CALL_COUNT += 1
     else:
         print("position manager:\n  label: ", label, " is not found.")
         target_position = {"place": "Bin_B", "deposit": "Bin_B", "grasp":"above"}

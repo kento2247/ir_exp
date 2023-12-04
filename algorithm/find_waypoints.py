@@ -17,7 +17,7 @@ class PathPlanning:
         # self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
         self.colision_width = 0.22
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
-        self.end_point = {"x": 2.1, "y": 3.5, "theta": 90}
+        self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
         self.begin_index = {"x": 0, "y": 0}
         self.end_index = {"x": 0, "y": 0}
 
@@ -140,7 +140,8 @@ class PathPlanning:
         plt.grid(True)
         plt.show()
 
-    def find_path(self, waypoints, old_x, old_y, move_x, move_y):
+    def find_path(self, waypoints, old_x, old_y, move_x=0, move_y=0):
+        """Find the path from the start to the end"""
         x = old_x + move_x
         y = old_y + move_y
         if waypoints[x][y][2] == 3:
@@ -148,21 +149,22 @@ class PathPlanning:
         else:
             if x - 1 >= 0 and waypoints[x - 1][y][2] == 1:
                 waypoints[x][y][2] = 4
-                return self.find_path(waypoints, x - 1, y)
+                return self.find_path(waypoints, x - 1, y, move_x, move_y)
             elif y - 1 >= 0 and waypoints[x][y - 1][2] == 1:
                 waypoints[x][y][2] = 4
-                return self.find_path(waypoints, x, y - 1)
+                return self.find_path(waypoints, x, y - 1, move_x, move_y)
             elif x + 1 < self.x_time and waypoints[x + 1][y][2] == 1:
                 waypoints[x][y][2] = 4
-                return self.find_path(waypoints, x + 1, y)
+                return self.find_path(waypoints, x + 1, y, move_x, move_y)
             elif y + 1 < self.y_time and waypoints[x][y + 1][2] == 1:
                 waypoints[x][y][2] = 4
-                return self.find_path(waypoints, x, y + 1)
+                return self.find_path(waypoints, x, y + 1, move_x, move_y)
             else:
                 waypoints[x][y][2] = 0
                 return waypoints
 
     def reconstruct_path(self, came_from, start, goal, waypoints):
+        """Reconstruct the path from the start to the end"""
         current = goal
         start_value = waypoints[start[0]][start[1]][2]
         goal_value = waypoints[goal[0]][goal[1]][2]
@@ -179,9 +181,11 @@ class PathPlanning:
             return None
 
     def heuristic(self, a, b):
+        """Calculate the heuristic for the A* algorithm"""
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
     def a_star_search(self, waypoints, start, goal):
+        """Perform the A* search algorithm"""
         frontier = []
         heapq.heappush(frontier, (0, start))
         came_from = {}
@@ -196,17 +200,17 @@ class PathPlanning:
                 break
 
             for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-                next = (current[0] + dx, current[1] + dy)
+                next_value = (current[0] + dx, current[1] + dy)
                 if (
-                    0 <= next[0] < self.x_time
-                    and 0 <= next[1] < self.y_time
-                    and waypoints[next[0]][next[1]][2] != 0
+                    0 <= next_value[0] < self.x_time
+                    and 0 <= next_value[1] < self.y_time
+                    and waypoints[next_value[0]][next_value[1]][2] != 0
                 ):
                     new_cost = cost_so_far[current] + 1
-                    if next not in cost_so_far or new_cost < cost_so_far[next]:
-                        cost_so_far[next] = new_cost
-                        priority = new_cost + self.heuristic(goal, next)
-                        heapq.heappush(frontier, (priority, next))
-                        came_from[next] = current
+                    if next_value not in cost_so_far or new_cost < cost_so_far[next_value]:
+                        cost_so_far[next_value] = new_cost
+                        priority = new_cost + self.heuristic(goal, next_value)
+                        heapq.heappush(frontier, (priority, next_value))
+                        came_from[next_value] = current
 
         return came_from, cost_so_far
