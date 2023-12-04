@@ -39,7 +39,7 @@ class WrsMainController(object):
     HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
     HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
-    TROFAST_Y_OFFSET = 0.4
+    TROFAST_Y_OFFSET = 0.36
     ignoreList = [
         "small_marker",
         "large_marker",
