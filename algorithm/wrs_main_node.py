@@ -559,9 +559,7 @@ class WrsMainController(object):
         waypoints = path_planning.get_waypoints()
         begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
         end = (path_planning.end_index["x"], path_planning.end_index["y"])
-        came_from, cost_so_far = path_planning.a_star_search(
-            filtered_waypoints, begin, end
-        )
+        came_from, cost_so_far = path_planning.a_star_search(waypoints, begin, end)
         filtered_waypoints = path_planning.reconstruct_path(
             came_from, begin, end, filtered_waypoints
         )
