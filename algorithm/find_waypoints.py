@@ -76,7 +76,19 @@ class PathPlanning:
             waypoints.append(new_row)
         waypoints[self.begin_index["x"]][self.begin_index["y"]][2] = 2
         waypoints[self.end_index["x"]][self.end_index["y"]][2] = 3
-        return waypoints
+
+        begin = (self.begin_index["x"], self.begin_index["y"])
+        end = (self.end_index["x"], self.end_index["y"])
+        came_from, cost_so_far = self.a_star_search(waypoints, begin, end)
+        filtered_waypoints = self.reconstruct_path(
+            came_from, begin, end, filtered_waypoints
+        )
+        # if filtered_waypoints is not None:
+        #     for i in range(self.x_time):
+        #         for j in range(self.y_time):
+        #             print(filtered_waypoints[i][j][2], end=",")
+        #         print()
+        return filtered_waypoints
 
     def add_angle(self, waypoints):
         if waypoints is None:
