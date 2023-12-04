@@ -49,7 +49,7 @@ class WrsMainController(object):
     HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
     HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
-    TROFAST_Y_OFFSET = 0.35
+    TROFAST_Y_OFFSET = 0.4
     ignoreList = [
         "small_marker",
         "large_marker",
@@ -57,6 +57,8 @@ class WrsMainController(object):
         "spatula",
         "nine_hole_peg_test",
         "plum",
+        "sugar_box",
+        "sponge",
     ]
 
     def __init__(self):
