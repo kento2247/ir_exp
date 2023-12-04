@@ -557,25 +557,21 @@ class WrsMainController(object):
             obstacle_list.append({"x": i.x, "y": i.y, "z": 0.0})
         path_planning = PathPlanning(obstacle_list)
         waypoints = path_planning.get_waypoints()
-        waypoints = path_planning.add_angle(waypoints)
-        print("waypoints: ", waypoints)
-        for i in waypoints:
+        begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
+        end = (path_planning.end_index["x"], path_planning.end_index["y"])
+        came_from, cost_so_far = path_planning.a_star_search(
+            filtered_waypoints, begin, end
+        )
+        filtered_waypoints = path_planning.reconstruct_path(
+            came_from, begin, end, filtered_waypoints
+        )
+        path_planning.result_waypoints = path_planning.add_angle(
+            path_planning.result_waypoints
+        )
+        print("waypoints: ", path_planning.result_waypoints)
+        for i in path_planning.result_waypoints:
             rospy.loginfo(i)
             self.goto_pos(i)
-        """
-        for i in range(3):
-            detected_objs = self.get_latest_detection()
-            bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
-            # bboxes=[{x:n,y:n,w:n,h:n,label:n,score:n}]かな？
-            pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
-            print("detected_objs: ", detected_objs)
-            print("bboxes: ", bboxes)
-            print("pos_bboxes: ", pos_bboxes)
-            waypoint = self.select_next_waypoint(i, pos_bboxes)
-            # TODO remove the commentout to check the message
-            rospy.loginfo(waypoint)
-            self.goto_pos(waypoint)
-        """
 
     def select_next_waypoint(self, current_stp, pos_bboxes):
         """
