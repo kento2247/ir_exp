@@ -563,9 +563,9 @@ class WrsMainController(object):
         filtered_waypoints = path_planning.reconstruct_path(
             came_from, begin, end, filtered_waypoints
         )
-        path_planning.result_waypoints = path_planning.add_angle(
-            path_planning.result_waypoints
-        )
+        path_planning.result_waypoints = (
+            path_planning.add_angle(path_planning.result_waypoints)
+        )[::-1]
         print("waypoints: ", path_planning.result_waypoints)
         for i in path_planning.result_waypoints:
             rospy.loginfo(i)
