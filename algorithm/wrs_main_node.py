@@ -548,7 +548,11 @@ class WrsMainController(object):
 
     def execute_avoid_blocks(self):
         # Avoid Obstacles
-        path_planning_instance = PathPlanning(obstacle_coordinates)
+        detected_objs = self.get_latest_detection()
+        bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
+        pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
+        print("pos_bboxes: ", pos_bboxes)
+        path_planning_instance = PathPlanning(pos_bboxes)
         waypoints = path_planning_instance.get_waypoints()
         print("waypoints: ", waypoints)
         for i in waypoints:
