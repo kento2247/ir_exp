@@ -40,11 +40,14 @@ class WrsMainController(object):
         "spatula",
         "nine_hole_peg_test",
         "plum",
+        "sugar_box",
+        "sponge",
     ]
     GRASP_TF_NAME = "object_grasping"
     GRASP_BACK_SAFE = {"z": 0.05, "xy": 0.3}
     GRASP_BACK = {"z": 0.05, "xy": 0.1}
     HAND_PALM_OFFSET = 0.05  # hand_palm_link is at the base of the hand so it needs an offset for grasping
+    HAND_PALM_Z_OFFSET = 0.075
     DETECT_CNT = 1
     TROFAST_Y_OFFSET = 0.3
     ignoreList = [
@@ -435,7 +438,7 @@ class WrsMainController(object):
         if label in ["cup", "frisbee", "bowl"]:
             # bowlの張り付き対策
             method = self.grasp_from_upper_side
-        elif label in ["sugar_box"]:
+        elif label in ["sugar_box", "sponge"]:
             method = self.grasp_from_front_side
         else:
             if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
