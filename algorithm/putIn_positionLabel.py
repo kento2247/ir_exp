@@ -1,6 +1,5 @@
 food_labels_call_count = 0
 
-
 def get_putIn_positionLabel(positionLabels_dict, label):
     global food_labels_call_count
     target_position = {}
