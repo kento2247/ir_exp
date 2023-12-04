@@ -558,7 +558,7 @@ class WrsMainController(object):
         path_planning = PathPlanning(obstacle_list)
         waypoints = path_planning.get_waypoints()
         waypoints = path_planning.add_angle(waypoints)
-        print("angled waypoints: ", waypoints)
+        print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)
             self.goto_pos(i)
