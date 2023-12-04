@@ -420,7 +420,7 @@ class WrsMainController(object):
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, 0, -100, 0, "-x")
 
-    def exec_graspable_method(self, grasp_pos, grasp_method, label=""):
+    def exec_graspable_method(self, grasp_pos,label=""):
         """
         task1: Decides the Grasping Motion from the positions
         Might Need Changes
@@ -434,23 +434,23 @@ class WrsMainController(object):
         if graspable_y < grasp_pos.y and desk_z > grasp_pos.z:
             return False
 
-        if grasp_method == "above":
-            method = self.grasp_from_left_side
-        elif grasp_method == "front":
-            method = self.grasp_from_front_side
-        else:
-            # not implemented yet
-            method = self.grasp_from_left_side
-
-        # if label in ["cup", "frisbee", "bowl"]:
-        #     # Avoiding Bowl Sticking to the Arm
-        #     method = self.grasp_from_upper_side
+        # if grasp_method == "above":
+        #     method = self.grasp_from_left_side
+        # elif grasp_method == "front":
+        #     method = self.grasp_from_front_side
         # else:
-        #     if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
-        #         # If the object is under the desk
-        #         method = self.grasp_from_front_side
-        #     else:
-        #         method = self.grasp_from_upper_side
+        #     # not implemented yet
+        #     method = self.grasp_from_left_side
+
+        if label in ["cup", "frisbee", "bowl"]:
+            # Avoiding Bowl Sticking to the Arm
+            method = self.grasp_from_upper_side
+        else:
+            if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
+                # If the object is under the desk
+                method = self.grasp_from_front_side
+            else:
+                method = self.grasp_from_upper_side
 
         method(grasp_pos)
         return True
@@ -691,7 +691,7 @@ class WrsMainController(object):
                 # If there exists any graspable objects, execute the grasping funciton
                 grasp_pos = self.get_grasp_coordinate(grasp_bbox)
                 self.change_pose("grasp_on_table")
-                self.exec_graspable_method(grasp_pos, grasp_method, label)
+                self.exec_graspable_method(grasp_pos,label)
                 self.change_pose("all_neutral")
 
                 self.put_in_place(deposit, "put_in_bin")
