@@ -156,7 +156,7 @@ class WrsMainController(object):
         """
         if name in self.coordinates["positions"].keys():
             pos = self.coordinates["positions"][name]
-            rospy.loginfo("go to [%s](%.2f, %.2f, %.2f)", name, pos[0], pos[1], pos[2])
+            # rospy.loginfo("go to [%s](%.2f, %.2f, %.2f)", name, pos[0], pos[1], pos[2])
             return omni_base.go_abs(pos[0], pos[1], pos[2])
         else:
             rospy.logerr("unknown waypoint name [%s]", name)
