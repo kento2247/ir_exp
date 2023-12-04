@@ -740,11 +740,11 @@ class WrsMainController(object):
         """
         Execue All Tasks
         """
-        # self.goto_initial_place()
-        # self.open_drawer()
-        # self.execute_task1()
+        self.goto_initial_place()
+        self.open_drawer()
+        self.execute_task1()
         self.execute_task2a()
-        # self.execute_task2b()
+        self.execute_task2b()
 
 
 def main():
