@@ -555,7 +555,8 @@ class WrsMainController(object):
         for i in pos_bboxes:
             print(i)
             obstacle_list.append({"x": i.x, "y": i.y, "z": 0.0})
-        waypoints = PathPlanning.get_waypoints(obstacle_list)
+        path_planning = PathPlanning(obstacle_list)
+        waypoints = path_planning.get_waypoints()
         print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)

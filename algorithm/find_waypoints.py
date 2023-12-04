@@ -193,34 +193,3 @@ class PathPlanning:
                         came_from[next] = current
 
         return came_from, cost_so_far
-
-
-def get_waypoints(obstacle_coordinates):
-    if obstacle_coordinates is None:
-        return None
-    obstacle_list = []
-    for i in obstacle_coordinates:
-        print(i)
-        obstacle_list.append({"x": i.x, "y": i.y, "z": 0.0})
-    path_planning = PathPlanning(obstacle_list)
-
-    filtered_waypoints = path_planning.get_waypoints()
-    begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
-    end = (path_planning.end_index["x"], path_planning.end_index["y"])
-
-    came_from, cost_so_far = path_planning.a_star_search(filtered_waypoints, begin, end)
-
-    filtered_waypoints = path_planning.reconstruct_path(
-        came_from, begin, end, filtered_waypoints
-    )
-    if filtered_waypoints is None:
-        return None
-    for i, point in enumerate(path_planning.result_waypoints[::-1]):
-        if i < len(path_planning.result_waypoints) - 1:
-            next_point = path_planning.result_waypoints[::-1][i + 1]
-            angle = math.degrees(
-                math.atan2(next_point[0] - point[0], next_point[1] - point[1])
-            )
-            path_planning.result_waypoints[::-1][i][2] = angle
-
-    return path_planning.result_waypoints
