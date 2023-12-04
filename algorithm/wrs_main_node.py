@@ -13,8 +13,6 @@ import traceback
 from select import select
 from turtle import pos
 
-
-from find_waypoints  import PathPlanning
 import putIn_positionLabel as PLM
 import rospkg
 import rospy
@@ -25,6 +23,7 @@ from detector_msgs.srv import (
     SetTransformFromBBox,
     SetTransformFromBBoxRequest,
 )
+from find_waypoints import PathPlanning
 from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
@@ -410,7 +409,7 @@ class WrsMainController(object):
             grasp_pos.z,
         )
         self.grasp_from_side(grasp_pos.x, grasp_pos.y, grasp_pos.z, -90, -160, 0, "-y")
-    
+
     def grasp_from_left_side(self, grasp_pos):
         grasp_pos.x += self.HAND_PALM_OFFSET
         rospy.loginfo(
@@ -434,13 +433,13 @@ class WrsMainController(object):
         # No Grasping Conditions
         if graspable_y < grasp_pos.y and desk_z > grasp_pos.z:
             return False
-        
+
         if grasp_method == "above":
             method = self.grasp_from_left_side
         elif grasp_method == "front":
             method = self.grasp_from_front_side
         else:
-            #not implemented yet
+            # not implemented yet
             method = self.grasp_from_left_side
 
         # if label in ["cup", "frisbee", "bowl"]:
@@ -549,7 +548,10 @@ class WrsMainController(object):
 
     def execute_avoid_blocks(self):
         # Avoid Obstacles
-        path_planning_instance = PathPlanning(obstacle_coordinates)
+        detected_objs = self.get_latest_detection()
+        bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
+        pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
+        path_planning_instance = PathPlanning(pos_bboxes)
         waypoints = path_planning_instance.get_waypoints()
         print("waypoints: ", waypoints)
         for i in waypoints:
@@ -693,7 +695,6 @@ class WrsMainController(object):
                 self.exec_graspable_method(grasp_pos, grasp_method, label)
                 self.change_pose("all_neutral")
 
- 
                 self.put_in_place(deposit, "put_in_bin")
 
     def execute_task2a(self):
@@ -742,8 +743,8 @@ class WrsMainController(object):
         """
         self.goto_initial_place()
         # self.open_drawer()
-        self.execute_task1()
-        # self.execute_task2a()
+        # self.execute_task1()
+        self.execute_task2a()
         # self.execute_task2b()
 
 

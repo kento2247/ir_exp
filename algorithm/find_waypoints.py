@@ -11,11 +11,12 @@ class PathPlanning:
     def __init__(self, obstacle_coordinates):
         self.mesh_begin = {"x": 2.0, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
-        self.mesh_resolution = 0.1
+        self.mesh_resolution = 0.04
         self.obstacle_coordinates = obstacle_coordinates
         self.obstacle_coordinates.append({"x": 2.0, "y": 2.1, "z": 0.0})
         self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
-        self.colision_width = 0.15
+        print(self.obstacle_coordinates)
+        self.colision_width = 0.19
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
         self.begin_index = {"x": 0, "y": 0}
@@ -149,13 +150,17 @@ class PathPlanning:
         current = goal
         start_value = waypoints[start[0]][start[1]][2]
         goal_value = waypoints[goal[0]][goal[1]][2]
-        while current != start:
-            waypoints[current[0]][current[1]][2] = 4
-            self.result_waypoints.append(waypoints[current[0]][current[1]])
-            current = came_from[current]
-        waypoints[start[0]][start[1]][2] = start_value
-        waypoints[goal[0]][goal[1]][2] = goal_value
-        return waypoints
+        try:
+            while current != start:
+                waypoints[current[0]][current[1]][2] = 4
+                self.result_waypoints.append(waypoints[current[0]][current[1]])
+                current = came_from[current]
+            waypoints[start[0]][start[1]][2] = start_value
+            waypoints[goal[0]][goal[1]][2] = goal_value
+            return waypoints
+        except:
+            print("No path found")
+            return None
 
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -209,6 +214,8 @@ def get_waypoints(obstacle_coordinates):
     filtered_waypoints = path_planning.reconstruct_path(
         came_from, begin, end, filtered_waypoints
     )
+    if filtered_waypoints is None:
+        return None
     for i, point in enumerate(path_planning.result_waypoints[::-1]):
         if i < len(path_planning.result_waypoints) - 1:
             next_point = path_planning.result_waypoints[::-1][i + 1]
