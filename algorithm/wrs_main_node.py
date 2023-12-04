@@ -557,6 +557,7 @@ class WrsMainController(object):
             obstacle_list.append({"x": i.x, "y": i.y, "z": 0.0})
         path_planning = PathPlanning(obstacle_list)
         waypoints = path_planning.get_waypoints()
+        waypoints = path_planning.add_angle(waypoints)
         print("waypoints: ", waypoints)
         for i in waypoints:
             rospy.loginfo(i)

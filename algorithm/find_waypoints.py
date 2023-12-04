@@ -78,6 +78,19 @@ class PathPlanning:
         waypoints[self.end_index["x"]][self.end_index["y"]][2] = 3
         return waypoints
 
+    def add_angle(self, waypoints):
+        if waypoints is None:
+            return None
+        for i, point in enumerate(waypoints):
+            if i < len(waypoints) - 1:
+                next_point = waypoints[i + 1]
+                angle = math.degrees(
+                    math.atan2(next_point[0] - point[0], next_point[1] - point[1])
+                )
+                waypoints[i][2] = float(angle)
+
+        return waypoints
+
     def plot_points_2d(self, waypoints):
         for i in range(self.x_time):
             for j in range(self.y_time):
