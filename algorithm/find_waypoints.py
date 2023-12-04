@@ -81,17 +81,17 @@ class PathPlanning:
     def add_angle(self, waypoints):
         if waypoints is None:
             return None
-        # for i, point in enumerate(waypoints):
-        #     if i < len(waypoints) - 1:
-        #         next_point = waypoints[i + 1]
-        #         angle = math.degrees(
-        #             math.atan2(next_point[0] - point[0], next_point[1] - point[1])
-        #         )
-        #         waypoints[i][2] = float(angle)
+        for i, point in enumerate(waypoints):
+            if i < len(waypoints) - 1:
+                next_point = waypoints[i + 1]
+                angle = math.degrees(
+                    math.atan2(next_point[0] - point[0], next_point[1] - point[1])
+                )
+                waypoints[i][2] = float(angle)
 
-        for i in waypoints:
-            print(i)
-            i[2] = float(90)
+        # for i in waypoints:
+        #     print(i)
+        #     i[2] = float(90)
 
         return waypoints
 
