@@ -435,6 +435,8 @@ class WrsMainController(object):
         if label in ["cup", "frisbee", "bowl"]:
             # bowlの張り付き対策
             method = self.grasp_from_upper_side
+        elif label in ["sugar_box"]:
+            method = self.grasp_from_front_side
         else:
             if desk_y < grasp_pos.y and desk_z > grasp_pos.z:
                 # 机の下である場合
