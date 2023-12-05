@@ -15,8 +15,7 @@ class PathPlanning:
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.04
         self.obstacle_coordinates = obstacle_coordinates
-        self.obstacle_coordinates.append({"x": 1.9, "y": 2.1, "z": 0.0})
-        # self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
+        self.obstacle_coordinates.append({"x": 1.9, "y": 2.1, "z": 0.0})  # 壁を障害物として登録
         self.colision_width = 0.22
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
@@ -90,11 +89,6 @@ class PathPlanning:
                     math.atan2(next_point[0] - point[0], next_point[1] - point[1])
                 )
                 waypoints[i][2] = float(angle)
-
-        # for i in waypoints:
-        #     print(i)
-        #     i[2] = float(90)
-
         return waypoints
 
     def plot_points_2d(self, waypoints):
@@ -114,31 +108,25 @@ class PathPlanning:
                         c="orange",
                         marker="o",
                     )
-
         obstacle_x, obstacle_y = zip(
             *[(point["x"], point["y"]) for point in self.obstacle_coordinates]
         )
         plt.scatter(obstacle_y, obstacle_x, c="red", marker="x")
-
         plt.scatter(
             self.begin_point["y"],
             self.begin_point["x"],
             c="green",
             marker="s",
         )
-
         plt.scatter(
             self.end_point["y"],
             self.end_point["x"],
             c="purple",
             marker="s",
         )
-
         plt.xlabel("Y")
         plt.ylabel("X")
-
         plt.gca().invert_yaxis()
-
         plt.grid(True)
         plt.show()
 
@@ -193,10 +181,8 @@ class PathPlanning:
 
         while frontier:
             _, current = heapq.heappop(frontier)
-
             if current == goal:
                 break
-
             for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 next_value = (current[0] + dx, current[1] + dy)
                 if (
