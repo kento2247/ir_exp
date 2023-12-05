@@ -11,11 +11,14 @@ class PathPlanning:
     result_waypoints = []
 
     def __init__(self, obstacle_coordinates):
+        """initialize the path planning"""
         self.mesh_begin = {"x": 1.9, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.04
         self.obstacle_coordinates = obstacle_coordinates
-        self.obstacle_coordinates.append({"x": 1.9, "y": 2.1, "z": 0.0})  # 壁を障害物として登録
+        self.obstacle_coordinates.append(
+            {"x": 1.9, "y": 2.1, "z": 0.0}
+        )  # register the wall as an obstacle
         self.colision_width = 0.22
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
@@ -31,6 +34,7 @@ class PathPlanning:
         self.y_time = int(self.y_length // self.mesh_resolution) + 2
 
     def is_obstacle(self, x, y):
+        """check if the point is the obstacle"""
         for obstacle in self.obstacle_coordinates:
             if (
                 abs(x - obstacle["x"]) < self.colision_width
@@ -40,6 +44,7 @@ class PathPlanning:
         return False
 
     def is_begin_point(self, x, y):
+        """check if the point is the begin point"""
         if (
             abs(x - self.begin_point["x"]) < self.colision_width
             and abs(y - self.begin_point["y"]) < self.colision_width
@@ -48,6 +53,7 @@ class PathPlanning:
         return False
 
     def is_end_point(self, x, y):
+        """check if the point is the end point"""
         if (
             abs(x - self.end_point["x"]) < self.colision_width
             and abs(y - self.end_point["y"]) < self.colision_width
@@ -56,6 +62,10 @@ class PathPlanning:
         return False
 
     def get_waypoints(self):
+        """
+        Get the waypoints map
+        the last element of each waypoint shows is begin point or end point or obstacle or not
+        """
         waypoints = []
         for i in range(self.x_time):
             new_row = []
@@ -80,6 +90,7 @@ class PathPlanning:
         return waypoints
 
     def add_angle(self, waypoints):
+        """replace the last element of each waypoint with the angle of the next waypoint"""
         if waypoints is None:
             return None
         for i, point in enumerate(waypoints):
@@ -92,6 +103,7 @@ class PathPlanning:
         return waypoints
 
     def plot_points_2d(self, waypoints):
+        """plot the 2d points on the graph (offline simulation)"""
         for i in range(self.x_time):
             for j in range(self.y_time):
                 if waypoints[i][j][2] == 1:
