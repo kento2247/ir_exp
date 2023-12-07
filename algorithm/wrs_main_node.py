@@ -456,6 +456,7 @@ class WrsMainController(object):
         self.change_pose("all_neutral")
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
+        """62114872 Amu Hata"""
         # pull the trofast drawers
         y_back_offset = self.coordinates["drawer_positions"]["back_offset"]["y"]
         self.goto_pos([x, y + y_back_offset, -90])  # go to pulling position

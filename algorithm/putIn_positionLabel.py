@@ -1,5 +1,5 @@
+"""62114872 Amu Hata"""
 FOOD_LABELS_CALL_COUNT = 0
-
 def get_put_in_position_label(position_labels_dict, label):
     """
     get put in position label for struct
