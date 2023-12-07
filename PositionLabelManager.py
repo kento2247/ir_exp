@@ -1,5 +1,8 @@
 class PositionLabelManager:
-    """62114872 Amu Hata"""
+    """
+    62114872 羽田 歩
+    Create JSON File containing item, place, and deposit info
+    """
     def __init__(self):
         self.positions = {}
         self.food_count = 0
