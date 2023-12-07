@@ -418,7 +418,8 @@ class WrsMainController(object):
 
     def exec_graspable_method(self, grasp_pos, label=""):
         """
-        task1専用:posの位置によって把持方法を判定し実行する。
+        62114872 羽田歩
+        *NOT IMPLEMENTED* Choose the right grasping method for detected object label
         """
         method = None
         graspable_y = 1.85  # これ以上奥は把持できない
@@ -456,7 +457,10 @@ class WrsMainController(object):
         self.change_pose("all_neutral")
 
     def pull_out_trofast(self, x, y, z, yaw, pitch, roll):
-        """62114872 Amu Hata"""
+        """
+        62114872 羽田 歩
+        Pulls out the drawer
+        """
         # pull the trofast drawers
         y_back_offset = self.coordinates["drawer_positions"]["back_offset"]["y"]
         self.goto_pos([x, y + y_back_offset, -90])  # go to pulling position
@@ -627,7 +631,8 @@ class WrsMainController(object):
 
     def open_drawer(self):
         """
-        Open the drawer using the coordinates provided in the 'drawer_positions' attribute.
+        62114872 羽田 歩
+        Pulls out drawer
         """
         drawer_positions = self.coordinates["drawer_positions"]
         # top_pos = drawer_positions["drawer_top"] #top does not open
