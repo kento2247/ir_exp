@@ -631,7 +631,7 @@ class WrsMainController(object):
 
     def open_drawer(self):
         """
-        62114872 羽田 歩
+        62114872 羽田 歩 
         Pulls out drawer
         """
         drawer_positions = self.coordinates["drawer_positions"]

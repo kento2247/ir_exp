@@ -2,7 +2,7 @@ FOOD_LABELS_CALL_COUNT = 0
 
 def get_put_in_position_label(position_labels_dict, label):
     """
-    62112607 戸倉健登
+    62114872 羽田 歩    
     get put in position label for struct
     """
     global FOOD_LABELS_CALL_COUNT
