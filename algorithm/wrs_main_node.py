@@ -21,8 +21,8 @@ from detector_msgs.srv import (
     SetTransformFromBBox,
     SetTransformFromBBoxRequest,
 )
-from std_msgs.msg import String
 from find_waypoints import PathPlanning
+from std_msgs.msg import String
 from wrs_algorithm.util import gripper, omni_base, whole_body
 
 
@@ -538,6 +538,7 @@ class WrsMainController(object):
 
     def execute_avoid_blocks(self):
         # Avoid Obstacles
+        """62112607 戸倉健登"""
         detected_objs = self.get_latest_detection()
         bboxes = detected_objs.bboxes  # [{x:n,y:n,w:n,h:n,label:n,score:n}]
         pos_bboxes = [self.get_grasp_coordinate(bbox) for bbox in bboxes]
@@ -550,9 +551,7 @@ class WrsMainController(object):
         begin = (path_planning.begin_index["x"], path_planning.begin_index["y"])
         end = (path_planning.end_index["x"], path_planning.end_index["y"])
         came_from, cost_so_far = path_planning.a_star_search(waypoints, begin, end)
-        filtered_waypoints = path_planning.reconstruct_path(
-            came_from, begin, end, waypoints
-        )
+        path_planning.reconstruct_path(came_from, begin, end, waypoints)
         path_planning.result_waypoints = (
             path_planning.add_angle(path_planning.result_waypoints)
         )[::-1]

@@ -6,15 +6,19 @@ import matplotlib.pyplot as plt
 
 
 class PathPlanning:
+    """62112607 戸倉健登"""
+
     result_waypoints = []
 
     def __init__(self, obstacle_coordinates):
+        """initialize the path planning"""
         self.mesh_begin = {"x": 1.9, "y": 1.8}
         self.mesh_end = {"x": 3.2, "y": 3.5}
         self.mesh_resolution = 0.04
         self.obstacle_coordinates = obstacle_coordinates
-        self.obstacle_coordinates.append({"x": 1.9, "y": 2.1, "z": 0.0})
-        # self.obstacle_coordinates.append({"x": 2.3, "y": 2.1, "z": 0.0})
+        self.obstacle_coordinates.append(
+            {"x": 1.9, "y": 2.1, "z": 0.0}
+        )  # register the wall as an obstacle
         self.colision_width = 0.22
         self.begin_point = {"x": 2.5, "y": 1.85, "theta": 90}
         self.end_point = {"x": 2.0, "y": 3.5, "theta": 90}
@@ -30,6 +34,7 @@ class PathPlanning:
         self.y_time = int(self.y_length // self.mesh_resolution) + 2
 
     def is_obstacle(self, x, y):
+        """check if the point is the obstacle"""
         for obstacle in self.obstacle_coordinates:
             if (
                 abs(x - obstacle["x"]) < self.colision_width
@@ -39,6 +44,7 @@ class PathPlanning:
         return False
 
     def is_begin_point(self, x, y):
+        """check if the point is the begin point"""
         if (
             abs(x - self.begin_point["x"]) < self.colision_width
             and abs(y - self.begin_point["y"]) < self.colision_width
@@ -47,6 +53,7 @@ class PathPlanning:
         return False
 
     def is_end_point(self, x, y):
+        """check if the point is the end point"""
         if (
             abs(x - self.end_point["x"]) < self.colision_width
             and abs(y - self.end_point["y"]) < self.colision_width
@@ -55,6 +62,10 @@ class PathPlanning:
         return False
 
     def get_waypoints(self):
+        """
+        Get the waypoints map
+        the last element of each waypoint shows is begin point or end point or obstacle or not
+        """
         waypoints = []
         for i in range(self.x_time):
             new_row = []
@@ -79,6 +90,7 @@ class PathPlanning:
         return waypoints
 
     def add_angle(self, waypoints):
+        """replace the last element of each waypoint with the angle of the next waypoint"""
         if waypoints is None:
             return None
         for i, point in enumerate(waypoints):
@@ -88,14 +100,10 @@ class PathPlanning:
                     math.atan2(next_point[0] - point[0], next_point[1] - point[1])
                 )
                 waypoints[i][2] = float(angle)
-
-        # for i in waypoints:
-        #     print(i)
-        #     i[2] = float(90)
-
         return waypoints
 
     def plot_points_2d(self, waypoints):
+        """plot the 2d points on the graph (offline simulation)"""
         for i in range(self.x_time):
             for j in range(self.y_time):
                 if waypoints[i][j][2] == 1:
@@ -112,31 +120,25 @@ class PathPlanning:
                         c="orange",
                         marker="o",
                     )
-
         obstacle_x, obstacle_y = zip(
             *[(point["x"], point["y"]) for point in self.obstacle_coordinates]
         )
         plt.scatter(obstacle_y, obstacle_x, c="red", marker="x")
-
         plt.scatter(
             self.begin_point["y"],
             self.begin_point["x"],
             c="green",
             marker="s",
         )
-
         plt.scatter(
             self.end_point["y"],
             self.end_point["x"],
             c="purple",
             marker="s",
         )
-
         plt.xlabel("Y")
         plt.ylabel("X")
-
         plt.gca().invert_yaxis()
-
         plt.grid(True)
         plt.show()
 
@@ -168,17 +170,13 @@ class PathPlanning:
         current = goal
         start_value = waypoints[start[0]][start[1]][2]
         goal_value = waypoints[goal[0]][goal[1]][2]
-        try:
-            while current != start:
-                waypoints[current[0]][current[1]][2] = 4
-                self.result_waypoints.append(waypoints[current[0]][current[1]])
-                current = came_from[current]
-            waypoints[start[0]][start[1]][2] = start_value
-            waypoints[goal[0]][goal[1]][2] = goal_value
-            return waypoints
-        except:
-            print("No path found")
-            return None
+        while current != start:
+            waypoints[current[0]][current[1]][2] = 4
+            self.result_waypoints.append(waypoints[current[0]][current[1]])
+            current = came_from[current]
+        waypoints[start[0]][start[1]][2] = start_value
+        waypoints[goal[0]][goal[1]][2] = goal_value
+        return waypoints
 
     def heuristic(self, a, b):
         """Calculate the heuristic for the A* algorithm"""
@@ -195,10 +193,8 @@ class PathPlanning:
 
         while frontier:
             _, current = heapq.heappop(frontier)
-
             if current == goal:
                 break
-
             for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 next_value = (current[0] + dx, current[1] + dy)
                 if (
@@ -207,10 +203,12 @@ class PathPlanning:
                     and waypoints[next_value[0]][next_value[1]][2] != 0
                 ):
                     new_cost = cost_so_far[current] + 1
-                    if next_value not in cost_so_far or new_cost < cost_so_far[next_value]:
+                    if (
+                        next_value not in cost_so_far
+                        or new_cost < cost_so_far[next_value]
+                    ):
                         cost_so_far[next_value] = new_cost
                         priority = new_cost + self.heuristic(goal, next_value)
                         heapq.heappush(frontier, (priority, next_value))
                         came_from[next_value] = current
-
         return came_from, cost_so_far
