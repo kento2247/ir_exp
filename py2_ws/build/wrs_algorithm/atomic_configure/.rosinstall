@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /workspace/py2_ws/devel/.private/wrs_algorithm/setup.sh

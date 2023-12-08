@@ -1,0 +1,12 @@
+Symlinking /workspace/py2_ws/devel/./_setup_util.py
+Symlinking /workspace/py2_ws/devel/./env.sh
+Symlinking /workspace/py2_ws/devel/./local_setup.zsh
+Symlinking /workspace/py2_ws/devel/./setup.sh
+Symlinking /workspace/py2_ws/devel/./setup.bash
+Symlinking /workspace/py2_ws/devel/./local_setup.sh
+Symlinking /workspace/py2_ws/devel/./setup.zsh
+Symlinking /workspace/py2_ws/devel/./cmake.lock
+Symlinking /workspace/py2_ws/devel/./local_setup.bash
+Symlinking /workspace/py2_ws/devel/lib/pkgconfig/catkin_tools_prebuild.pc
+Symlinking /workspace/py2_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+Symlinking /workspace/py2_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake

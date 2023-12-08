@@ -1,11 +1,15 @@
 class PositionLabelManager:
+    """
+    62114872 羽田 歩
+    Create JSON File containing item, place, and deposit info
+    """
     def __init__(self):
         self.positions = {}
-        self.foodCount = 0
+        self.food_count = 0
         self.init_putIn_positionLabel()
 
     def init_putIn_positionLabel(self):
-        shapeItems_labels = [
+        shapeitems_labels = [
             "credit_card_blank",
             "mini_soccer_ball",
             "softball",
@@ -42,7 +46,7 @@ class PositionLabelManager:
             "plum",
         ]
 
-        kitchenItems_labels = [
+        kitchenitems_labels = [
             "windex_bottle",
             "bleach_cleanser",
             "sponge",
@@ -57,7 +61,7 @@ class PositionLabelManager:
             "mug",
         ]
 
-        orientationBasedItems_labels = [
+        orientationbaseditems_labels = [
             "large_marker",
             "small_marker",
             "padlock",
@@ -65,7 +69,7 @@ class PositionLabelManager:
             "clamp",
         ]
 
-        taskItems_labels = [
+        taskitems_labels = [
             "rubiks_cube",
             "colored_wood_block",
             "nine_hole_peg_test",
@@ -76,25 +80,25 @@ class PositionLabelManager:
             "timer",
         ]
 
-        for obj in shapeItems_labels:
+        for obj in shapeitems_labels:
             self.positions[obj] = {"place": "Drawer", "deposit": "Drawer_left"}
 
         for obj in food_labels:
             self.positions[obj] = {"place": "Long_Table_A", "deposit": ""}
 
-        for obj in kitchenItems_labels:
+        for obj in kitchenitems_labels:
             self.positions[obj] = {"place": "Long_Table_A", "deposit": "Container_A"}
 
-        for obj in orientationBasedItems_labels:
+        for obj in orientationbaseditems_labels:
             self.positions[obj] = {"place": "Long_Table_A", "deposit": "Container_B"}
 
-        for obj in taskItems_labels:
+        for obj in taskitems_labels:
             self.positions[obj] = {"place": "Bin_A", "deposit": "Bin_A"}
 
     def get(self, label):
         if self.positions[label]["deposit"] == "":
             self.positions[label]["deposit"] = (
-                "Tray_A" if self.foodCount % 2 == 0 else "Tray_B"
+                "Tray_A" if self.food_count % 2 == 0 else "Tray_B"
             )
-            self.foodCount += 1
+            self.food_count += 1
         return self.positions[label]

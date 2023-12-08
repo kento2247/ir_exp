@@ -1,0 +1,1 @@
+/workspace/py2_ws/devel/.private/wrs_algorithm/share/wrs_algorithm/cmake/wrs_algorithmConfig-version.cmake

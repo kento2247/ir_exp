@@ -1,0 +1,1 @@
+/workspace/py2_ws/devel/.private/detector_msgs/include/detector_msgs/BBox.h

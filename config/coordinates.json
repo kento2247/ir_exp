@@ -1,0 +1,72 @@
+{
+  "positions": {
+    "Drawer_left": [0.38, 0.4, -90],
+    "Drawer_top": [0.18, 0.4, -90],
+    "Drawer_bottom": [0.18, 0.4, -90],
+    "Tray_A": [1.58, 0.0, -90],
+    "Tray_B": [1.82, 0.0, -90],
+    "Container_A": [1.08, 0.0, -90],
+    "Container_B": [1.35, 0.0, -90],
+    "Bin_A": [2.4, 0.0, -90],
+    "Bin_B": [2.8, 0.0, -90],
+    "initial_place": [-0.02, 0.4, 95],
+    "tall_table": [-0.02, 1.0, 95],
+    "long_table_r": [1.45, 1.0, 90],
+    "near_long_table_l": [0.2, 0.35, 90],
+    "drawer": [0.35, 0.2, -90],
+    "stair_like_drawer": [0.178, 0.3, -90],
+    "bin_a_place": [2.35, 0.0, -90],
+    "bin_b_place": [2.65, 0.0, -80],
+    "standby_2a": [2.5, 1.85, 90],
+    "go_throw_2a": [2.0, 3.5, 90],
+    "shelf": [2.3, 3.9, 90],
+    "person_a": [0.7, 2.8, 180],
+    "person_b": [0.7, 3.9, 180],
+    "home": [0, 0.2, 0]
+  },
+  "routes": {
+    "test": [
+      "Drawer_left",
+      "Drawer_right",
+      "Drawer_top",
+      "Drawer_bottom",
+      "tall_table",
+      "long_table_r",
+      "long_table_bin_a",
+      "long_table_bin_b",
+      "long_table_bin_c",
+      "near_long_table_l",
+      "drawer",
+      "bin_a",
+      "bin_a_place",
+      "bin_b",
+      "bin_b_place",
+      "standby_2a",
+      "go_throw_2a",
+      "shelf",
+      "person_a",
+      "person_b",
+      "home"
+    ]
+  },
+  "drawer_positions": {
+    "drawer_top": {
+      "x": 0.17,
+      "y": -0.29,
+      "z": null
+    },
+    "drawer_bottom": {
+      "x": 0.17,
+      "y": -0.29,
+      "z": 0.3
+    },
+    "drawer_left": {
+      "x": 0.47,
+      "y": -0.29,
+      "z": 0.3
+    },
+    "back_offset": {
+      "y": 0.4
+    }
+  }
+}
